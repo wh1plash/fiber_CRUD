@@ -6,7 +6,9 @@ import (
 	"fiber/store"
 	"fiber/types"
 	"fmt"
+	"reflect"
 	"strconv"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -57,7 +59,23 @@ func (h *UserHandler) HandlePutUser(c *fiber.Ctx) error {
 		return c.JSON(errors)
 	}
 
-	res, err := h.userStore.UpdateUser(c.Context(), id, params.FirstName, params.LastName)
+	v := reflect.ValueOf(params)
+	t := reflect.TypeOf(params)
+	querySet := make(map[string]any)
+	for i := range v.NumField() {
+		//fieldName := t.Field(i).Name
+		jsonTag := t.Field(i).Tag.Get("db")
+		fieldValue := v.Field(i).Interface()
+		//fmt.Printf("Field: %s (json: %s), Value: %v\n", fieldName, jsonTag, fieldValue)
+
+		key := strings.Split(jsonTag, ",")[0]
+		if value, ok := fieldValue.(string); ok && value != "" {
+			querySet[key] = value
+		}
+
+	}
+
+	res, err := h.userStore.UpdateUser(c.Context(), id, querySet)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return ErrNotFound(id, "User")

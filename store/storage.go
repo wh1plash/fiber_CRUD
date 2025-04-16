@@ -9,7 +9,6 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/go-faster/errors"
 	_ "github.com/lib/pq"
 )
 
@@ -18,7 +17,7 @@ type UserStore interface {
 	DeleteUser(context.Context, int) (int, error)
 	GetUsers(context.Context) ([]*types.User, error)
 	GetUserByID(context.Context, int) (*types.User, error)
-	UpdateUser(context.Context, int, string, string) (types.User, error)
+	UpdateUser(context.Context, int, map[string]any) (types.User, error)
 }
 
 type PostgresStore struct {
@@ -122,26 +121,16 @@ func (p *PostgresStore) DeleteUser(ctx context.Context, id int) (int, error) {
 	return deletedID, nil
 }
 
-func (p *PostgresStore) UpdateUser(ctx context.Context, id int, firstName, lastName string) (types.User, error) {
+func (p *PostgresStore) UpdateUser(ctx context.Context, id int, querySet map[string]any) (types.User, error) {
 
 	setClauses := []string{}
 	args := []any{}
 	argPos := 1
 
-	if firstName != "" {
-		setClauses = append(setClauses, fmt.Sprintf("first_name = $%d", argPos))
-		args = append(args, firstName)
+	for k, v := range querySet {
+		setClauses = append(setClauses, fmt.Sprintf("%s = $%d", k, argPos))
+		args = append(args, v)
 		argPos++
-	}
-
-	if lastName != "" {
-		setClauses = append(setClauses, fmt.Sprintf("last_name = $%d", argPos))
-		args = append(args, lastName)
-		argPos++
-	}
-
-	if len(setClauses) == 0 {
-		return types.User{}, errors.New("no fields to update")
 	}
 
 	args = append(args, id)
@@ -195,7 +184,7 @@ func (p *PostgresStore) InsertUser(ctx context.Context, user *types.User) (*type
 		&insUser.IsAdmin,
 		&insUser.CreatedAt,
 	)
-	fmt.Println(insUser)
+
 	if err != nil {
 		return nil, err
 	}

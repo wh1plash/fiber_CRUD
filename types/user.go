@@ -41,9 +41,9 @@ type DeleteUserParams struct {
 }
 
 type UpdateUserParams struct {
-	FirstName string `json:"firstName,omitempty"`
-	LastName  string `json:"lastName,omitempty"`
-	Email     string `json:"email,omitempty"`
+	FirstName string `json:"firstName,omitempty" db:"first_name"`
+	LastName  string `json:"lastName,omitempty" db:"last_name"`
+	Email     string `json:"email,omitempty" db:"email"`
 }
 
 func (params UpdateUserParams) Validate() map[string]string {
@@ -54,6 +54,9 @@ func (params UpdateUserParams) Validate() map[string]string {
 	}
 	if params.LastName != "" && len(params.LastName) < minLastNameLen {
 		errors["lastName"] = fmt.Sprintf("lastName length should be at least %d characters", minLastNameLen)
+	}
+	if params.Email != "" && !isEmailValid(params.Email) {
+		errors["email"] = "invalid email present"
 	}
 
 	return errors
