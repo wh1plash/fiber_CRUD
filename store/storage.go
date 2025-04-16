@@ -49,6 +49,11 @@ func (p *PostgresStore) GetUsers(ctx context.Context) ([]*types.User, error) {
 		return nil, err
 	}
 
+	if !rows.Next() {
+		fmt.Println("no rows found")
+		return nil, sql.ErrNoRows
+	}
+
 	users := []*types.User{}
 	for rows.Next() {
 		user := new(types.User)
@@ -75,6 +80,7 @@ func (p *PostgresStore) GetUsers(ctx context.Context) ([]*types.User, error) {
 func (p *PostgresStore) GetUserByID(ctx context.Context, id int) (*types.User, error) {
 	rows, err := p.db.QueryContext(ctx, "select * from users where id=$1", id)
 	if err != nil {
+		fmt.Println("DB", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -85,7 +91,7 @@ func (p *PostgresStore) GetUserByID(ctx context.Context, id int) (*types.User, e
 	}
 
 	user := &types.User{}
-	//for rows.Next() {
+	//rows.Next()
 	if err := rows.Scan(
 		&user.ID,
 		&user.FirstName,
@@ -94,10 +100,11 @@ func (p *PostgresStore) GetUserByID(ctx context.Context, id int) (*types.User, e
 		&user.EncryptedPassword,
 		&user.IsAdmin,
 		&user.CreatedAt); err != nil {
+
 		return nil, err
+
 	}
 	//}
-	fmt.Println(user)
 
 	return user, nil
 }

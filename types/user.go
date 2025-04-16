@@ -43,6 +43,7 @@ type DeleteUserParams struct {
 type UpdateUserParams struct {
 	FirstName string `json:"firstName,omitempty"`
 	LastName  string `json:"lastName,omitempty"`
+	Email     string `json:"email,omitempty"`
 }
 
 func (params UpdateUserParams) Validate() map[string]string {
