@@ -41,8 +41,8 @@ type DeleteUserParams struct {
 }
 
 type UpdateUserParams struct {
-	FirstName string `json:"firstName,omitempty" db:"first_name"`
-	LastName  string `json:"lastName,omitempty" db:"last_name"`
+	FirstName string `db:"first_name" json:"firstName,omitempty"`
+	LastName  string `db:"last_name" json:"lastName,omitempty"`
 	Email     string `json:"email,omitempty" db:"email"`
 }
 
@@ -65,7 +65,6 @@ func (params UpdateUserParams) Validate() map[string]string {
 func (params GetUserParams) Validate() map[string]string {
 	errors := map[string]string{}
 	if params.ID == 0 {
-		//errors["id"] = fmt.Sprintf("id is required")
 		errors["id"] = "id is required"
 	}
 	return errors

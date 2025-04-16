@@ -72,7 +72,9 @@ func (h *UserHandler) HandlePutUser(c *fiber.Ctx) error {
 		if value, ok := fieldValue.(string); ok && value != "" {
 			querySet[key] = value
 		}
-
+	}
+	if len(querySet) == 0 {
+		return ErrBadRequest()
 	}
 
 	res, err := h.userStore.UpdateUser(c.Context(), id, querySet)
