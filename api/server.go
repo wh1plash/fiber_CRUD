@@ -44,21 +44,34 @@ func (s *Server) Run() {
 		apiv1       = app.Group("/api/v1")
 		userHandler = NewUserHandler(db)
 	)
-
 	apiv1.Get("/home", s.HomeHandler)
 
-	apiv1.Post("/user", userHandler.HandlePostUser)
-	apiv1.Put("/user/:id", userHandler.HandlePutUser)
-	apiv1.Delete("/user/:id", userHandler.HandleDeleteUser)
-	apiv1.Get("/users", userHandler.HandleGetUsers)
-	apiv1.Get("/user/:id", userHandler.HandleGetUserByID)
+	LoggedRoute(apiv1, "POST", "/user", userHandler.HandlePostUser)
+	LoggedRoute(apiv1, "PUT", "/user/:id", userHandler.HandlePutUser)
+	LoggedRoute(apiv1, "DELETE", "/user/:id", userHandler.HandleDeleteUser)
+	LoggedRoute(apiv1, "GET", "/users", userHandler.HandleGetUsers)
+	LoggedRoute(apiv1, "GET", "/user/:id", userHandler.HandleGetUserByID)
 
 	err = app.Listen(s.listenAddr)
 	if err != nil {
 		s.logger.Error("error to start server", "error", err.Error())
 		return
 	}
+}
 
+func LoggedRoute(r fiber.Router, method, path string, handler fiber.Handler) {
+	wrapped := LoggingHandlerDecorator(handler)
+	switch method {
+	case "GET":
+		r.Get(path, wrapped)
+	case "POST":
+		r.Post(path, wrapped)
+	case "PUT":
+		r.Put(path, wrapped)
+	case "DELETE":
+		r.Delete(path, wrapped)
+
+	}
 }
 
 func (s *Server) HomeHandler(c *fiber.Ctx) error {
