@@ -6,6 +6,8 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/prometheus/client_golang/prometheus"
+	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
 func LoggingHandlerDecorator(handler fiber.Handler) fiber.Handler {
@@ -30,5 +32,30 @@ func LoggingHandlerDecorator(handler fiber.Handler) fiber.Handler {
 		fmt.Println(string(c.Response().Body()))
 		fmt.Println("-----------------------------------------------------")
 		return err
+	}
+}
+
+func (p *PromMetrics) WithMetrics(h fiber.Handler) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		err := h(c)
+		p.TotalRequests.Inc()
+		fmt.Println("Total requests:", p.TotalRequests)
+		return err
+	}
+}
+
+type PromMetrics struct {
+	TotalRequests prometheus.Counter `json:"total_requests"`
+	//TotalErrors   int64              `json:"total_errors"`
+	//RequestDurations
+}
+
+func NewPromMetrics() *PromMetrics {
+	counter := promauto.NewCounter(prometheus.CounterOpts{
+		Name: "total_requests",
+		Help: "Total number of requests",
+	})
+	return &PromMetrics{
+		TotalRequests: counter,
 	}
 }

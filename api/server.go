@@ -4,7 +4,9 @@ import (
 	"fiber/store"
 	"log/slog"
 
+	"github.com/gofiber/adaptor/v2"
 	"github.com/gofiber/fiber/v2"
+	"github.com/prometheus/client_golang/prometheus/promhttp"
 )
 
 var config = fiber.Config{
@@ -27,6 +29,10 @@ func (s *Server) Stop() {
 	s.logger.Info("server stopped")
 }
 
+func RegisterMetrics(app *fiber.App) {
+	app.Get("/metrics", adaptor.HTTPHandler(promhttp.Handler()))
+}
+
 func (s *Server) Run() {
 	db, err := store.NewPostgresStore()
 	if err != nil {
@@ -43,14 +49,18 @@ func (s *Server) Run() {
 		app         = fiber.New(config)
 		apiv1       = app.Group("/api/v1")
 		userHandler = NewUserHandler(db)
+		promMetrics = NewPromMetrics()
 	)
-	apiv1.Get("/home", s.HomeHandler)
+	RegisterMetrics(app)
 
-	LoggedRoute(apiv1, "POST", "/user", userHandler.HandlePostUser)
-	LoggedRoute(apiv1, "PUT", "/user/:id", userHandler.HandlePutUser)
-	LoggedRoute(apiv1, "DELETE", "/user/:id", userHandler.HandleDeleteUser)
-	LoggedRoute(apiv1, "GET", "/users", userHandler.HandleGetUsers)
-	LoggedRoute(apiv1, "GET", "/user/:id", userHandler.HandleGetUserByID)
+	apiv1.Post("/user", WrapHandler(promMetrics, userHandler.HandlePostUser))
+	apiv1.Put("/user/:id", WrapHandler(promMetrics, userHandler.HandlePutUser))
+	apiv1.Delete("/user/:id", WrapHandler(promMetrics, userHandler.HandleDeleteUser))
+	apiv1.Get("/users", WrapHandler(promMetrics, userHandler.HandleGetUsers))
+
+	//LoggedRoute(apiv1, "GET", "/user/:id", WrapHandler(promMetrics, userHandler.HandleGetUserByID))
+
+	apiv1.Get("/user/:id", WrapHandler(promMetrics, userHandler.HandleGetUserByID))
 
 	err = app.Listen(s.listenAddr)
 	if err != nil {
@@ -59,22 +69,10 @@ func (s *Server) Run() {
 	}
 }
 
-func LoggedRoute(r fiber.Router, method, path string, handler fiber.Handler) {
-	wrapped := LoggingHandlerDecorator(handler)
-	switch method {
-	case "GET":
-		r.Get(path, wrapped)
-	case "POST":
-		r.Post(path, wrapped)
-	case "PUT":
-		r.Put(path, wrapped)
-	case "DELETE":
-		r.Delete(path, wrapped)
-
-	}
+func WrapHandler(p *PromMetrics, handler fiber.Handler) fiber.Handler {
+	return p.WithMetrics(LoggingHandlerDecorator(handler))
 }
 
-func (s *Server) HomeHandler(c *fiber.Ctx) error {
-	return c.JSON(map[string]string{"message": "All works fine"})
+func StartMetrics() {
 
 }

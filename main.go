@@ -10,7 +10,7 @@ import (
 	"github.com/joho/godotenv"
 )
 
-const listenAddr = "localhost:3000"
+const listenAddr = "0.0.0.0:3000"
 
 func init() {
 	mustLoadEnvVariables()
