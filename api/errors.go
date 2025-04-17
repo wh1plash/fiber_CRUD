@@ -3,6 +3,7 @@ package api
 import (
 	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -11,8 +12,12 @@ func ErrorHandler(c *fiber.Ctx, err error) error {
 	if ApiError, ok := err.(Error); ok {
 		return c.Status(ApiError.Code).JSON(ApiError)
 	}
-	ApiError := NewError(fiber.StatusInternalServerError, err.Error())
+
+	ApiError := NewError(err.(*fiber.Error).Code, err.Error())
+	curTime := time.Now()
+	fmt.Printf("%s Request failed with code %d and message: %s\n", &curTime, ApiError.Code, ApiError.Message)
 	return c.Status(ApiError.Code).JSON(ApiError)
+
 }
 
 type Error struct {
