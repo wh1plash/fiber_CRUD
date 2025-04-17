@@ -85,7 +85,6 @@ func (p *PostgresStore) GetUserByID(ctx context.Context, id int) (*types.User, e
 	defer rows.Close()
 
 	if !rows.Next() {
-		fmt.Println("no rows found")
 		return nil, sql.ErrNoRows
 	}
 
