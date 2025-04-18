@@ -47,11 +47,7 @@ func (p *PostgresStore) GetUsers(ctx context.Context) ([]*types.User, error) {
 	if err != nil {
 		return nil, err
 	}
-
-	if !rows.Next() {
-		fmt.Println("no rows found")
-		return nil, sql.ErrNoRows
-	}
+	defer rows.Close()
 
 	users := []*types.User{}
 	for rows.Next() {
@@ -70,6 +66,10 @@ func (p *PostgresStore) GetUsers(ctx context.Context) ([]*types.User, error) {
 		}
 
 		users = append(users, user)
+	}
+
+	if len(users) == 0 {
+		return nil, sql.ErrNoRows
 	}
 
 	return users, nil
