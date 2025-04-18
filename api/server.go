@@ -53,14 +53,11 @@ func (s *Server) Run() {
 	)
 	RegisterMetrics(app)
 
-	apiv1.Post("/user", WrapHandler(promMetrics, userHandler.HandlePostUser))
-	apiv1.Put("/user/:id", WrapHandler(promMetrics, userHandler.HandlePutUser))
-	apiv1.Delete("/user/:id", WrapHandler(promMetrics, userHandler.HandleDeleteUser))
-	apiv1.Get("/users", WrapHandler(promMetrics, userHandler.HandleGetUsers))
-
-	//LoggedRoute(apiv1, "GET", "/user/:id", WrapHandler(promMetrics, userHandler.HandleGetUserByID))
-
-	apiv1.Get("/user/:id", WrapHandler(promMetrics, userHandler.HandleGetUserByID))
+	apiv1.Post("/user", WrapHandler(promMetrics, userHandler.HandlePostUser, "HandlePostUser"))
+	apiv1.Put("/user/:id", WrapHandler(promMetrics, userHandler.HandlePutUser, "HandlePutUser"))
+	apiv1.Delete("/user/:id", WrapHandler(promMetrics, userHandler.HandleDeleteUser, "HandleDeleteUser"))
+	apiv1.Get("/users", WrapHandler(promMetrics, userHandler.HandleGetUsers, "HandleGetUsers"))
+	apiv1.Get("/user/:id", WrapHandler(promMetrics, userHandler.HandleGetUserByID, "HandleGetUserByID"))
 
 	err = app.Listen(s.listenAddr)
 	if err != nil {
@@ -69,6 +66,6 @@ func (s *Server) Run() {
 	}
 }
 
-func WrapHandler(p *PromMetrics, handler fiber.Handler) fiber.Handler {
-	return p.WithMetrics(LoggingHandlerDecorator(handler))
+func WrapHandler(p *PromMetrics, handler fiber.Handler, handlerName string) fiber.Handler {
+	return p.WithMetrics(LoggingHandlerDecorator(handler), handlerName)
 }

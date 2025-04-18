@@ -120,6 +120,8 @@ func (h *UserHandler) HandleGetUsers(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) HandleGetUserByID(c *fiber.Ctx) error {
+
+	time.Sleep(time.Second * 1)
 	par := c.Params("id")
 	id, err := strconv.Atoi(par)
 	if err != nil {

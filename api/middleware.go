@@ -35,12 +35,9 @@ func LoggingHandlerDecorator(handler fiber.Handler) fiber.Handler {
 	}
 }
 
-func (p *PromMetrics) WithMetrics(h fiber.Handler) fiber.Handler {
+func (p *PromMetrics) WithMetrics(h fiber.Handler, handlerName string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		err := h(c)
-		//TODO: find a way to get handler name
-		handlerName := c.Route().Path
-		fmt.Println(handlerName)
 		if err != nil {
 			if apiErr, ok := err.(Error); ok {
 				p.TotalErrors.WithLabelValues(handlerName).Inc()
