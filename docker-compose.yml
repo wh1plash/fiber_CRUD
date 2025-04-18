@@ -9,6 +9,7 @@ services:
       - ./metrics/prometheus.yml:/etc/prometheus/prometheus.yml
     extra_hosts:
       - "host.docker.internal:host-gateway"
+      
   grafana:
     image: grafana/grafana-enterprise
     container_name: grafana
@@ -22,6 +23,7 @@ services:
       - prometheus
     extra_hosts:
       - "host.docker.internal:host-gateway"
+
   postgres_db:
     image: postgres:latest
     container_name: postgres_db
