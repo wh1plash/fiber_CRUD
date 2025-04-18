@@ -72,7 +72,3 @@ func (s *Server) Run() {
 func WrapHandler(p *PromMetrics, handler fiber.Handler) fiber.Handler {
 	return p.WithMetrics(LoggingHandlerDecorator(handler))
 }
-
-func StartMetrics() {
-
-}
