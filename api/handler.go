@@ -9,6 +9,7 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -106,6 +107,7 @@ func (h *UserHandler) HandleDeleteUser(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) HandleGetUsers(c *fiber.Ctx) error {
+	time.Sleep(time.Second * 2)
 	users, err := h.userStore.GetUsers(c.Context())
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {

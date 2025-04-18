@@ -38,24 +38,43 @@ func LoggingHandlerDecorator(handler fiber.Handler) fiber.Handler {
 func (p *PromMetrics) WithMetrics(h fiber.Handler) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		err := h(c)
+		if err != nil {
+			if apiErr, ok := err.(Error); ok {
+				p.TotalErrors.Inc()
+				_ = apiErr.Code
+			}
+		}
 		p.TotalRequests.Inc()
-		fmt.Println("Total requests:", p.TotalRequests)
+		time := time.Since(c.Context().Time())
+		p.RequestLatency.Observe(float64(time.Milliseconds()))
 		return err
 	}
 }
 
 type PromMetrics struct {
-	TotalRequests prometheus.Counter `json:"total_requests"`
-	//TotalErrors   int64              `json:"total_errors"`
+	TotalRequests  prometheus.Counter   `json:"total_requests"`
+	RequestLatency prometheus.Histogram `json:"request_latency"`
+	TotalErrors    prometheus.Counter   `json:"total_errors"`
 	//RequestDurations
 }
 
 func NewPromMetrics() *PromMetrics {
-	counter := promauto.NewCounter(prometheus.CounterOpts{
+	reqCounter := promauto.NewCounter(prometheus.CounterOpts{
 		Name: "total_requests",
 		Help: "Total number of requests",
 	})
+	reqLatency := promauto.NewHistogram(prometheus.HistogramOpts{
+		Name:    "request_latency",
+		Help:    "Request latency in seconds",
+		Buckets: []float64{0.1, 0.5, 1.0, 2.0, 5.0},
+	})
+	reqErrCounter := promauto.NewCounter(prometheus.CounterOpts{
+		Name: "total_errors",
+		Help: "Total number of errors",
+	})
 	return &PromMetrics{
-		TotalRequests: counter,
+		TotalRequests:  reqCounter,
+		RequestLatency: reqLatency,
+		TotalErrors:    reqErrCounter,
 	}
 }
