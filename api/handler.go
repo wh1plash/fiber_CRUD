@@ -56,6 +56,7 @@ func (h *UserHandler) HandlePutUser(c *fiber.Ctx) error {
 	if err := c.BodyParser(&params); err != nil {
 		return ErrBadRequest()
 	}
+	//TODO: set response code
 	if errors := params.Validate(); len(errors) > 0 {
 		return c.JSON(errors)
 	}
