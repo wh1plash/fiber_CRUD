@@ -9,6 +9,46 @@
 ```
 > make run
 ```
+### Add user
+```
+http://localhost:3000/api/v1/user
+
+JSON body:
+{
+    "firstName": "Req6",
+    "lastName": "Test",
+    "email": "basr@foo.com",
+    "password": "hunter123"
+}
+```
+### Get user by ID
+```
+http://localhost:3000/api/v1/user/:id
+```
+### List all users
+```
+http://localhost:3000/api/v1/users
+```
+### Update user
+```
+http://localhost:3000/api/v1/user/:id
+
+JSON body:
+{
+    "firstName": "f666",
+    "lastName": "f6666",
+    "email": "exampl@mail.com"
+}
+```
+### Delete user
+```
+http://localhost:3000/api/v1/user/:id
+```
+### Mitrics
+```
+http://localhost:3000/metrics
+```
+
 ## Prometheus metrics available on address  
 ```
 http://localhost:3000/metrics
