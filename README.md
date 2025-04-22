@@ -44,11 +44,6 @@ JSON body:
 ```
 http://localhost:3000/api/v1/user/:id
 ```
-### Mitrics
-```
-http://localhost:3000/metrics
-```
-
 ## Prometheus metrics available on address  
 ```
 http://localhost:3000/metrics
@@ -57,6 +52,12 @@ http://localhost:3000/metrics
 ```
 http://localhost:3001/
 ```
+
+### Grafana Dashboard Template(JSON)
+```
+Paste all from custom_metrics.json into Grafana → Dashboards → + Import → Paste JSON
+```
+
 ### Default dashboards
 ```
 http://localhost:3001/d/go-app-handler-metrics
