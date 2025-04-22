@@ -46,6 +46,22 @@ type UpdateUserParams struct {
 	Email     string `json:"email,omitempty" db:"email"`
 }
 
+type UserLoginRequest struct {
+	Email    string `json:"email"`
+	Password string `json:"password"`
+}
+
+func (params UserLoginRequest) Validate() map[string]string {
+	errors := map[string]string{}
+	if len(params.Email) == 0 {
+		errors["email"] = "email is required"
+	}
+	if len(params.Password) == 0 {
+		errors["password"] = "password is required"
+	}
+	return errors
+}
+
 func (params UpdateUserParams) Validate() map[string]string {
 	errors := map[string]string{}
 

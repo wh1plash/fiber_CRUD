@@ -17,6 +17,7 @@ type UserStore interface {
 	DeleteUser(context.Context, int) (int, error)
 	GetUsers(context.Context) ([]*types.User, error)
 	GetUserByID(context.Context, int) (*types.User, error)
+	GetUserByEmail(context.Context, string) (*types.User, error)
 	UpdateUser(context.Context, int, map[string]any) (types.User, error)
 }
 
@@ -74,6 +75,31 @@ func (p *PostgresStore) GetUsers(ctx context.Context) ([]*types.User, error) {
 
 	return users, nil
 
+}
+
+func (p *PostgresStore) GetUserByEmail(ctx context.Context, email string) (*types.User, error) {
+	rows, err := p.db.QueryContext(ctx, "select * from users where email=$1", email)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	if !rows.Next() {
+		return nil, sql.ErrNoRows
+	}
+
+	user := &types.User{}
+	if err := rows.Scan(
+		&user.ID,
+		&user.FirstName,
+		&user.LastName,
+		&user.Email,
+		&user.EncryptedPassword,
+		&user.IsAdmin,
+		&user.CreatedAt); err != nil {
+		return nil, err
+	}
+	return user, nil
 }
 
 func (p *PostgresStore) GetUserByID(ctx context.Context, id int) (*types.User, error) {

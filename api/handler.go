@@ -9,7 +9,6 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -30,7 +29,7 @@ func (h *UserHandler) HandlePostUser(c *fiber.Ctx) error {
 		return ErrBadRequest()
 	}
 	if errors := params.Validate(); len(errors) > 0 {
-		return c.JSON(errors)
+		return NewValidationError(errors)
 	}
 	user, err := types.NewUserFromParams(params)
 	if err != nil {
@@ -46,6 +45,43 @@ func (h *UserHandler) HandlePostUser(c *fiber.Ctx) error {
 
 }
 
+func (h *UserHandler) HandleGetUserByID(c *fiber.Ctx) error {
+	par := c.Params("id")
+	id, err := strconv.Atoi(par)
+	if err != nil {
+		return ErrInvalidID()
+	}
+	user, err := h.userStore.GetUserByID(c.Context(), id)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return ErrNotFound(id, "User")
+		}
+		return err
+	}
+
+	return c.JSON(user)
+}
+
+func (h *UserHandler) HandleLogging(c *fiber.Ctx) error {
+	var params types.UserLoginRequest
+	if err := c.BodyParser(&params); err != nil {
+		return ErrBadRequest()
+	}
+
+	if errors := params.Validate(); len(errors) > 0 {
+		return c.Status(fiber.StatusUnprocessableEntity).JSON(errors)
+	}
+
+	user, err := h.userStore.GetUserByEmail(c.Context(), params.Email)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return ErrNotFound(params.Email, "User")
+		}
+		return err
+	}
+	return c.JSON(user)
+}
+
 func (h *UserHandler) HandlePutUser(c *fiber.Ctx) error {
 	par := c.Params("id")
 	id, err := strconv.Atoi(par)
@@ -58,7 +94,7 @@ func (h *UserHandler) HandlePutUser(c *fiber.Ctx) error {
 	}
 	//TODO: set response code
 	if errors := params.Validate(); len(errors) > 0 {
-		return c.JSON(errors)
+		return NewValidationError(errors)
 	}
 
 	v := reflect.ValueOf(params)
@@ -108,32 +144,12 @@ func (h *UserHandler) HandleDeleteUser(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) HandleGetUsers(c *fiber.Ctx) error {
-	time.Sleep(time.Second * 2)
 	users, err := h.userStore.GetUsers(c.Context())
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
-			return ErrNoRecords("Users")
+			return ErrNotFound("Users", "no condition")
 		}
 		return err
 	}
 	return c.JSON(users)
-}
-
-func (h *UserHandler) HandleGetUserByID(c *fiber.Ctx) error {
-
-	time.Sleep(time.Second * 1)
-	par := c.Params("id")
-	id, err := strconv.Atoi(par)
-	if err != nil {
-		return ErrInvalidID()
-	}
-	user, err := h.userStore.GetUserByID(c.Context(), id)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return ErrNotFound(id, "User")
-		}
-		return err
-	}
-
-	return c.JSON(user)
 }

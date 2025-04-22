@@ -11,6 +11,10 @@ import (
 func ErrorHandler(c *fiber.Ctx, err error) error {
 	if ApiError, ok := err.(Error); ok {
 		return c.Status(ApiError.Code).JSON(ApiError)
+	} else {
+		if ValError, ok := err.(ValidationError); ok {
+			return c.Status(ValError.Status).JSON(ValError)
+		}
 	}
 
 	ApiError := NewError(err.(*fiber.Error).Code, err.Error())
@@ -23,6 +27,22 @@ func ErrorHandler(c *fiber.Ctx, err error) error {
 type Error struct {
 	Code    int    `json:"code"`
 	Message string `json:"error"`
+}
+
+type ValidationError struct {
+	Status int               `json:"status"`
+	Errors map[string]string `json:"errors"`
+}
+
+func (e ValidationError) Error() string {
+	return "validation failed"
+}
+
+func NewValidationError(errors map[string]string) ValidationError {
+	return ValidationError{
+		Status: fiber.StatusUnprocessableEntity,
+		Errors: errors,
+	}
 }
 
 // Error implements the Error interface
@@ -58,16 +78,16 @@ func ErrUnAuthorized() Error {
 	}
 }
 
-func ErrNotFound(id int, resource string) Error {
+func ErrNotFound[T any](arg T, resource string) Error {
 	return Error{
 		Code:    http.StatusNotFound,
-		Message: fmt.Sprintf("%s with %d not found", resource, id),
+		Message: fmt.Sprintf("%s with %v not found", resource, arg),
 	}
 }
 
-func ErrNoRecords(resource string) Error {
-	return Error{
-		Code:    http.StatusNotFound,
-		Message: fmt.Sprintf("%s not found", resource),
-	}
-}
+// func ErrNoRecords(resource string) Error {
+// 	return Error{
+// 		Code:    http.StatusNotFound,
+// 		Message: fmt.Sprintf("%s not found", resource),
+// 	}
+// }
