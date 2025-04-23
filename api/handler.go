@@ -6,11 +6,14 @@ import (
 	"fiber/store"
 	"fiber/types"
 	"fmt"
+	"os"
 	"reflect"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/golang-jwt/jwt/v5"
 )
 
 type UserHandler struct {
@@ -46,6 +49,7 @@ func (h *UserHandler) HandlePostUser(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) HandleGetUserByID(c *fiber.Ctx) error {
+	//time.Sleep(time.Duration(rand.Intn(1000)) * time.Millisecond)
 	par := c.Params("id")
 	id, err := strconv.Atoi(par)
 	if err != nil {
@@ -131,4 +135,57 @@ func (h *UserHandler) HandleGetUsers(c *fiber.Ctx) error {
 		return err
 	}
 	return c.JSON(users)
+}
+
+func (h *UserHandler) HandleAuthenticate(c *fiber.Ctx) error {
+	var params types.AuthParams
+	if err := c.BodyParser(&params); err != nil {
+		return ErrBadRequest()
+	}
+
+	if errors := params.Validate(); len(errors) > 0 {
+		return NewValidationError(errors)
+	}
+
+	user, err := h.UserStore.GetUserByEmail(c.Context(), params.Email)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return ErrNotFound(params.Email, "User")
+		}
+		return err
+	}
+
+	if !types.IsValidPassword(user.EncryptedPassword, params.Password) {
+		return ErrInvalidCredentials()
+	}
+
+	token, err := CreateTokenFromUser(user)
+	if err != nil {
+		return err
+	}
+
+	resp := types.AuthResponse{
+		User:  user,
+		Token: token,
+	}
+
+	//eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImJhc3JAZm9vLmNvbSIsImV4cGlyZXMiOjE3NDU0ODY3ODQsImlkIjoyfQ.gBN5DSkrmscxUbakFdqEFozRhEzkqJwYyFH_j42UZjg
+	return c.JSON(resp)
+}
+
+func CreateTokenFromUser(u *types.User) (string, error) {
+	now := time.Now()
+	expires := now.Add(time.Hour * 24).Unix()
+	claims := jwt.MapClaims{
+		"id":      u.ID,
+		"email":   u.Email,
+		"expires": expires,
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	secret := os.Getenv("JWT_SECRET")
+	tokenStr, err := token.SignedString([]byte(secret))
+	if err != nil {
+		return "", err
+	}
+	return tokenStr, nil
 }

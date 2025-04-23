@@ -51,7 +51,6 @@ func (s *Server) Run() {
 		app         = fiber.New(config)
 		apiv1       = app.Group("/api/v1")
 		userHandler = api.NewUserHandler(db)
-		authHandler = middleware.NewAuthHandler(db)
 		promMetrics = middleware.NewPromMetrics()
 	)
 	RegisterMetrics(app)
@@ -59,9 +58,10 @@ func (s *Server) Run() {
 	apiv1.Post("/user", WrapHandler(promMetrics, userHandler.HandlePostUser, "HandlePostUser"))
 	apiv1.Put("/user/:id", WrapHandler(promMetrics, userHandler.HandlePutUser, "HandlePutUser"))
 	apiv1.Delete("/user/:id", WrapHandler(promMetrics, userHandler.HandleDeleteUser, "HandleDeleteUser"))
-	apiv1.Get("/users", WrapHandler(promMetrics, userHandler.HandleGetUsers, "HandleGetUsers"))
 	apiv1.Get("/user/:id", WrapHandler(promMetrics, userHandler.HandleGetUserByID, "HandleGetUserByID"))
-	apiv1.Get("/login", WrapHandler(promMetrics, authHandler.HandleAuthenticate, "HandleLogging"))
+	apiv1.Get("/auth", WrapHandler(promMetrics, userHandler.HandleAuthenticate, "HandleAuthUser"))
+	//apiv1.Use(authHandler)
+	apiv1.Get("/users", WrapHandler(promMetrics, userHandler.HandleGetUsers, "HandleGetUsers"))
 
 	err = app.Listen(s.listenAddr)
 	if err != nil {
