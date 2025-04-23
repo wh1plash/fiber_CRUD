@@ -2,7 +2,6 @@ package api
 
 import (
 	"fmt"
-	"net/http"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -59,35 +58,35 @@ func NewError(code int, err string) Error {
 
 func ErrBadRequest() Error {
 	return Error{
-		Code:    http.StatusBadRequest,
+		Code:    fiber.StatusBadRequest,
 		Message: "invalid JSON request",
 	}
 }
 
 func ErrInvalidID() Error {
 	return Error{
-		Code:    http.StatusBadRequest,
+		Code:    fiber.StatusBadRequest,
 		Message: "invalid id given",
 	}
 }
 
 func ErrUnAuthorized() Error {
 	return Error{
-		Code:    http.StatusUnauthorized,
+		Code:    fiber.StatusUnauthorized,
 		Message: "unauthorized",
 	}
 }
 
 func ErrNotFound[T any](arg T, resource string) Error {
 	return Error{
-		Code:    http.StatusNotFound,
+		Code:    fiber.StatusNotFound,
 		Message: fmt.Sprintf("%s with %v not found", resource, arg),
 	}
 }
 
-// func ErrNoRecords(resource string) Error {
-// 	return Error{
-// 		Code:    http.StatusNotFound,
-// 		Message: fmt.Sprintf("%s not found", resource),
-// 	}
-// }
+func ErrInvalidCredentials() Error {
+	return Error{
+		Code:    fiber.StatusBadRequest,
+		Message: "invalid credentials",
+	}
+}

@@ -61,7 +61,7 @@ func (s *Server) Run() {
 	apiv1.Delete("/user/:id", WrapHandler(promMetrics, userHandler.HandleDeleteUser, "HandleDeleteUser"))
 	apiv1.Get("/users", WrapHandler(promMetrics, userHandler.HandleGetUsers, "HandleGetUsers"))
 	apiv1.Get("/user/:id", WrapHandler(promMetrics, userHandler.HandleGetUserByID, "HandleGetUserByID"))
-	apiv1.Get("/login", WrapHandler(promMetrics, authHandler.HandleLoginUser, "HandleLogging"))
+	apiv1.Get("/login", WrapHandler(promMetrics, authHandler.HandleAuthenticate, "HandleLogging"))
 
 	err = app.Listen(s.listenAddr)
 	if err != nil {

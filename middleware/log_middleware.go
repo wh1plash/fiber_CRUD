@@ -2,7 +2,6 @@ package middleware
 
 import (
 	"fiber/api"
-	"fmt"
 	"log/slog"
 	"time"
 
@@ -40,8 +39,8 @@ func LoggingHandlerDecorator(handler fiber.Handler) fiber.Handler {
 		path := c.Path()
 
 		logger.Info("New request:", "method", method, "path", path, "status", status, "errors", errors, "message", errorType, "duration", duration)
-		fmt.Println(string(c.Response().Body()))
-		fmt.Println("-----------------------------------------------------")
+		// fmt.Println(string(c.Response().Body()))
+		// fmt.Println("-----------------------------------------------------")
 		return err
 	}
 }

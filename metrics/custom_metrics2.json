@@ -1,0 +1,71 @@
+{
+    "title": "Go Fiber API Overview",
+    "uid": "go-fiber-api",
+    "timezone": "browser",
+    "refresh": "10s",
+    "schemaVersion": 30,
+    "version": 1,
+    "panels": [
+      {
+        "title": "Requests per Handler",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "rate(total_requests[1m])",
+            "legendFormat": "{{handler}}",
+            "refId": "A"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 0, "w": 12, "h": 8 }
+      },
+      {
+        "title": "Errors per Handler",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "rate(total_errors[1m])",
+            "legendFormat": "{{handler}}",
+            "refId": "A"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 8, "w": 12, "h": 8 }
+      },
+      {
+        "title": "Average Request Latency (seconds)",
+        "type": "timeseries",
+        "targets": [
+          {
+            "expr": "rate(request_latency_sum[1m]) / rate(request_latency_count[1m])",
+            "legendFormat": "{{handler}}",
+            "refId": "A"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 16, "w": 12, "h": 8 }
+      },
+      {
+        "title": "Error Rate % per Handler",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "100 * rate(total_errors[1m]) / rate(total_requests[1m])",
+            "legendFormat": "{{handler}}",
+            "refId": "A"
+          }
+        ],
+        "gridPos": { "x": 0, "y": 24, "w": 6, "h": 5 }
+      },
+      {
+        "title": "Top Latency (Last Minute)",
+        "type": "table",
+        "targets": [
+          {
+            "expr": "rate(request_latency_sum[1m]) / rate(request_latency_count[1m])",
+            "legendFormat": "{{handler}}",
+            "refId": "A"
+          }
+        ],
+        "gridPos": { "x": 6, "y": 24, "w": 6, "h": 5 }
+      }
+    ]
+  }
+  
