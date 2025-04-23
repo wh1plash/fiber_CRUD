@@ -1,8 +1,7 @@
-package api
+package middleware
 
 import (
-	"fmt"
-	"log/slog"
+	"fiber/api"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
@@ -10,48 +9,11 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-func LoggingHandlerDecorator(handler fiber.Handler) fiber.Handler {
-	logger := slog.Default()
-	return func(c *fiber.Ctx) error {
-		status := fiber.StatusOK
-		errorType := "none"
-		start := time.Now()
-		errors := make(map[string]string)
-		err := handler(c)
-		if err != nil {
-			if apiErr, ok := err.(Error); ok {
-				//fmt.Printf("Request failed with code %d and message: %s\n", apiErr.Code, apiErr.Message)
-				status = apiErr.Code
-				errors["error"] = apiErr.Message
-				errorType = "Api error"
-			} else {
-				if valErr, ok := err.(ValidationError); ok {
-					status = valErr.Status
-					errors = valErr.Errors
-					errorType = "Validation error"
-				} else {
-					status = fiber.StatusInternalServerError
-					errors["error"] = err.Error()
-					errorType = "Internal server error"
-				}
-			}
-		}
-		duration := time.Since(start)
-		method := c.Method()
-		path := c.Path()
-
-		logger.Info("New request:", "method", method, "path", path, "status", status, "errors", errors, "message", errorType, "duration", duration)
-		fmt.Println(string(c.Response().Body()))
-		fmt.Println("-----------------------------------------------------")
-		return err
-	}
-}
-
 func (p *PromMetrics) WithMetrics(h fiber.Handler, handlerName string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		err := h(c)
 		if err != nil {
-			if apiErr, ok := err.(Error); ok {
+			if apiErr, ok := err.(api.Error); ok {
 				p.TotalErrors.WithLabelValues(handlerName).Inc()
 				_ = apiErr.Code
 			}

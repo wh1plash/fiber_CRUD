@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fiber/api"
+	"fiber/server"
 	"log"
 	"os"
 	"os/signal"
@@ -17,7 +17,7 @@ func init() {
 }
 
 func main() {
-	s := api.NewServer(listenAddr)
+	s := server.NewServer(listenAddr)
 
 	go s.Run()
 

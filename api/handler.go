@@ -14,12 +14,12 @@ import (
 )
 
 type UserHandler struct {
-	userStore store.UserStore
+	UserStore store.UserStore
 }
 
 func NewUserHandler(userStore store.UserStore) *UserHandler {
 	return &UserHandler{
-		userStore: userStore,
+		UserStore: userStore,
 	}
 }
 
@@ -36,7 +36,7 @@ func (h *UserHandler) HandlePostUser(c *fiber.Ctx) error {
 		return err
 	}
 
-	insertedUser, err := h.userStore.InsertUser(c.Context(), user)
+	insertedUser, err := h.UserStore.InsertUser(c.Context(), user)
 	if err != nil {
 		return err
 	}
@@ -51,7 +51,7 @@ func (h *UserHandler) HandleGetUserByID(c *fiber.Ctx) error {
 	if err != nil {
 		return ErrInvalidID()
 	}
-	user, err := h.userStore.GetUserByID(c.Context(), id)
+	user, err := h.UserStore.GetUserByID(c.Context(), id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return ErrNotFound(id, "User")
@@ -72,7 +72,6 @@ func (h *UserHandler) HandlePutUser(c *fiber.Ctx) error {
 	if err := c.BodyParser(&params); err != nil {
 		return ErrBadRequest()
 	}
-	//TODO: set response code
 	if errors := params.Validate(); len(errors) > 0 {
 		return NewValidationError(errors)
 	}
@@ -95,7 +94,7 @@ func (h *UserHandler) HandlePutUser(c *fiber.Ctx) error {
 		return ErrBadRequest()
 	}
 
-	res, err := h.userStore.UpdateUser(c.Context(), id, querySet)
+	res, err := h.UserStore.UpdateUser(c.Context(), id, querySet)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return ErrNotFound(id, "User")
@@ -113,7 +112,7 @@ func (h *UserHandler) HandleDeleteUser(c *fiber.Ctx) error {
 		return ErrInvalidID()
 	}
 
-	deletedID, err := h.userStore.DeleteUser(c.Context(), id)
+	deletedID, err := h.UserStore.DeleteUser(c.Context(), id)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return ErrNotFound(id, "User")
@@ -124,7 +123,7 @@ func (h *UserHandler) HandleDeleteUser(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) HandleGetUsers(c *fiber.Ctx) error {
-	users, err := h.userStore.GetUsers(c.Context())
+	users, err := h.UserStore.GetUsers(c.Context())
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return ErrNotFound("Users", "no condition")

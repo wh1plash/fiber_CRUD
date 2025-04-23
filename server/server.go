@@ -1,6 +1,8 @@
-package api
+package server
 
 import (
+	"fiber/api"
+	"fiber/middleware"
 	"fiber/store"
 	"log/slog"
 
@@ -10,7 +12,7 @@ import (
 )
 
 var config = fiber.Config{
-	ErrorHandler: ErrorHandler,
+	ErrorHandler: api.ErrorHandler,
 }
 
 type Server struct {
@@ -48,8 +50,9 @@ func (s *Server) Run() {
 	var (
 		app         = fiber.New(config)
 		apiv1       = app.Group("/api/v1")
-		userHandler = NewUserHandler(db)
-		promMetrics = NewPromMetrics()
+		userHandler = api.NewUserHandler(db)
+		authHandler = middleware.NewAuthHandler(db)
+		promMetrics = middleware.NewPromMetrics()
 	)
 	RegisterMetrics(app)
 
@@ -58,7 +61,7 @@ func (s *Server) Run() {
 	apiv1.Delete("/user/:id", WrapHandler(promMetrics, userHandler.HandleDeleteUser, "HandleDeleteUser"))
 	apiv1.Get("/users", WrapHandler(promMetrics, userHandler.HandleGetUsers, "HandleGetUsers"))
 	apiv1.Get("/user/:id", WrapHandler(promMetrics, userHandler.HandleGetUserByID, "HandleGetUserByID"))
-	apiv1.Get("/login", WrapHandler(promMetrics, userHandler.HandleLogging, "HandleLogging"))
+	apiv1.Get("/login", WrapHandler(promMetrics, authHandler.HandleLoginUser, "HandleLogging"))
 
 	err = app.Listen(s.listenAddr)
 	if err != nil {
@@ -67,6 +70,6 @@ func (s *Server) Run() {
 	}
 }
 
-func WrapHandler(p *PromMetrics, handler fiber.Handler, handlerName string) fiber.Handler {
-	return p.WithMetrics(LoggingHandlerDecorator(handler), handlerName)
+func WrapHandler(p *middleware.PromMetrics, handler fiber.Handler, handlerName string) fiber.Handler {
+	return p.WithMetrics(middleware.LoggingHandlerDecorator(handler), handlerName)
 }
