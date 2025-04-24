@@ -51,21 +51,22 @@ func (s *Server) Run() {
 		app         = fiber.New(config)
 		userHandler = api.NewUserHandler(db)
 		authHandler = api.NewAuthHandler(db)
-		auth        = app.Group("/api")
-		apiv1       = app.Group("/api/v1", middleware.JWTAuthentication(db))
 		promMetrics = middleware.NewPromMetrics()
+		auth        = app.Group("/api")
+		apiv1       = app.Group("/api/v1")
 	)
 	RegisterMetrics(app)
+
 	auth.Post("/auth", WrapHandler(promMetrics, authHandler.HandleAuthenticate, "HandleAuthenticate"))
 
-	apiv1.Post("/user", WrapHandler(promMetrics, userHandler.HandlePostUser, "HandlePostUser"))
-	apiv1.Put("/user/:id", WrapHandler(promMetrics, userHandler.HandlePutUser, "HandlePutUser"))
-	apiv1.Delete("/user/:id", WrapHandler(promMetrics, userHandler.HandleDeleteUser, "HandleDeleteUser"))
-	apiv1.Get("/user/:id", WrapHandler(promMetrics, userHandler.HandleGetUserByID, "HandleGetUserByID"))
+	apiv1.Post("/user", WrapHandler(promMetrics, WithAuth(userHandler.HandlePostUser, db), "HandlePostUser"))
+	apiv1.Put("/user/:id", WrapHandler(promMetrics, WithAuth(userHandler.HandlePutUser, db), "HandlePutUser"))
+	apiv1.Delete("/user/:id", WrapHandler(promMetrics, WithAuth(userHandler.HandleDeleteUser, db), "HandleDeleteUser"))
+	apiv1.Get("/user/:id", WrapHandler(promMetrics, WithAuth(userHandler.HandleGetUserByID, db), "HandleGetUserByID"))
 
 	//apiv1.Get("/auth", WrapHandler(promMetrics, authHandler.HandleAuthenticate, "HandleAuthenticate"))
 	//apiv1.Use(authHandler)
-	apiv1.Get("/users", WrapHandler(promMetrics, userHandler.HandleGetUsers, "HandleGetUsers"))
+	apiv1.Get("/users", WrapHandler(promMetrics, WithAuth(userHandler.HandleGetUsers, db), "HandleGetUsers"))
 
 	err = app.Listen(s.listenAddr)
 	if err != nil {
@@ -74,6 +75,14 @@ func (s *Server) Run() {
 	}
 }
 
+func WithAuth(handler fiber.Handler, db store.UserStore) fiber.Handler {
+	return middleware.JWTAuthentication(handler, db)
+}
+
+func WithLogging(handler fiber.Handler) fiber.Handler {
+	return middleware.LoggingHandlerDecorator(handler)
+}
+
 func WrapHandler(p *middleware.PromMetrics, handler fiber.Handler, handlerName string) fiber.Handler {
-	return p.WithMetrics(middleware.LoggingHandlerDecorator(handler), handlerName)
+	return p.WithMetrics(WithLogging(handler), handlerName)
 }
