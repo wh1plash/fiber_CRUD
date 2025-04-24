@@ -43,28 +43,7 @@ type DeleteUserParams struct {
 type UpdateUserParams struct {
 	FirstName string `db:"first_name" json:"firstName,omitempty"`
 	LastName  string `db:"last_name" json:"lastName,omitempty"`
-	Email     string `json:"email,omitempty" db:"email"`
-}
-
-type AuthParams struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-type AuthResponse struct {
-	User  *User  `json:"user"`
-	Token string `json:"token"`
-}
-
-func (p AuthParams) Validate() map[string]string {
-	errors := map[string]string{}
-	if p.Email == "" {
-		errors["Email"] = "email is required"
-	}
-	if p.Password == "" {
-		errors["Password"] = "password is required"
-	}
-	return errors
+	Email     string `db:"email" json:"email,omitempty"`
 }
 
 func (params UpdateUserParams) Validate() map[string]string {

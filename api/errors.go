@@ -70,10 +70,10 @@ func ErrInvalidID() Error {
 	}
 }
 
-func ErrUnAuthorized() Error {
+func ErrUnAuthorized(msg string) Error {
 	return Error{
 		Code:    fiber.StatusUnauthorized,
-		Message: "unauthorized",
+		Message: msg,
 	}
 }
 

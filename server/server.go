@@ -49,17 +49,21 @@ func (s *Server) Run() {
 
 	var (
 		app         = fiber.New(config)
-		apiv1       = app.Group("/api/v1")
 		userHandler = api.NewUserHandler(db)
+		authHandler = api.NewAuthHandler(db)
+		auth        = app.Group("/api")
+		apiv1       = app.Group("/api/v1", middleware.JWTAuthentication(db))
 		promMetrics = middleware.NewPromMetrics()
 	)
 	RegisterMetrics(app)
+	auth.Post("/auth", WrapHandler(promMetrics, authHandler.HandleAuthenticate, "HandleAuthenticate"))
 
 	apiv1.Post("/user", WrapHandler(promMetrics, userHandler.HandlePostUser, "HandlePostUser"))
 	apiv1.Put("/user/:id", WrapHandler(promMetrics, userHandler.HandlePutUser, "HandlePutUser"))
 	apiv1.Delete("/user/:id", WrapHandler(promMetrics, userHandler.HandleDeleteUser, "HandleDeleteUser"))
 	apiv1.Get("/user/:id", WrapHandler(promMetrics, userHandler.HandleGetUserByID, "HandleGetUserByID"))
-	apiv1.Get("/auth", WrapHandler(promMetrics, userHandler.HandleAuthenticate, "HandleAuthUser"))
+
+	//apiv1.Get("/auth", WrapHandler(promMetrics, authHandler.HandleAuthenticate, "HandleAuthenticate"))
 	//apiv1.Use(authHandler)
 	apiv1.Get("/users", WrapHandler(promMetrics, userHandler.HandleGetUsers, "HandleGetUsers"))
 
