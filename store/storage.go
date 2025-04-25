@@ -5,14 +5,18 @@ import (
 	"database/sql"
 	"fiber/types"
 	"fmt"
-	"os"
-	"strconv"
 	"strings"
 
 	_ "github.com/lib/pq"
 )
 
+type Dropper interface {
+	DropTable(name string) error
+}
+
 type UserStore interface {
+	Dropper
+
 	InsertUser(context.Context, *types.User) (*types.User, error)
 	DeleteUser(context.Context, int) (int, error)
 	GetUsers(context.Context) ([]*types.User, error)
@@ -25,9 +29,7 @@ type PostgresStore struct {
 	db *sql.DB
 }
 
-func NewPostgresStore() (*PostgresStore, error) {
-	port, _ := strconv.Atoi(os.Getenv("PG_PORT"))
-	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", os.Getenv("PG_HOST"), port, os.Getenv("PG_USER"), os.Getenv("PG_PASS"), os.Getenv("PG_DB_NAME"))
+func NewPostgresStore(connStr string) (*PostgresStore, error) {
 	db, err := sql.Open("postgres", connStr)
 	if err != nil {
 		return nil, err
@@ -234,4 +236,13 @@ func (p *PostgresStore) createUserTable() error {
 
 func (p *PostgresStore) Init() error {
 	return p.createUserTable()
+}
+
+func (p *PostgresStore) DropTable(name string) error {
+	_, err := p.db.Exec(fmt.Sprintf("drop table if exists %s", name))
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	return nil
 }

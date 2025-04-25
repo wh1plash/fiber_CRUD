@@ -4,7 +4,10 @@ import (
 	"fiber/api"
 	"fiber/middleware"
 	"fiber/store"
+	"fmt"
 	"log/slog"
+	"os"
+	"strconv"
 
 	"github.com/gofiber/adaptor/v2"
 	"github.com/gofiber/fiber/v2"
@@ -36,7 +39,9 @@ func RegisterMetrics(app *fiber.App) {
 }
 
 func (s *Server) Run() {
-	db, err := store.NewPostgresStore()
+	port, _ := strconv.Atoi(os.Getenv("PG_PORT"))
+	connStr := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", os.Getenv("PG_HOST"), port, os.Getenv("PG_USER"), os.Getenv("PG_PASS"), os.Getenv("PG_DB_NAME"))
+	db, err := store.NewPostgresStore(connStr)
 	if err != nil {
 		s.logger.Error("error to connect to Posgres database", "error", err.Error())
 		return

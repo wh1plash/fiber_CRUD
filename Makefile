@@ -6,4 +6,5 @@ run: build
 
 test: 
 	@go test -v ./...
+	
 .PHONY: build
