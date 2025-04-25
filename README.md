@@ -71,6 +71,14 @@ PG_PASS="postgres"
 PG_DB_NAME="Fiber_CRUD"
 ```
 
+## Testing
+### for now it need to be created database 'test' in postrges DB
+Run test by
+```
+make test
+```
+
+
 ## Useful tools
 ### go-callvis
 This tool build interactive diagram of calling directly from source code
