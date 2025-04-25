@@ -71,3 +71,14 @@ PG_PASS="postgres"
 PG_DB_NAME="Fiber_CRUD"
 ```
 
+## Useful tools
+### go-callvis
+This tool build interactive diagram of calling directly from source code
+Install:
+```
+go install github.com/ofabry/go-callvis@latest
+```
+Run:
+```
+go-callvis ./...
+```

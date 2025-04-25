@@ -46,7 +46,7 @@ func (h *UserHandler) HandlePostUser(c *fiber.Ctx) error {
 }
 
 func (h *UserHandler) HandleGetUserByID(c *fiber.Ctx) error {
-	//time.Sleep(time.Duration(rand.Intn(1000)) * time.Millisecond)
+	//time.Sleep(time.Duration(rand.Intn(500)) * time.Millisecond)
 	par := c.Params("id")
 	id, err := strconv.Atoi(par)
 	if err != nil {

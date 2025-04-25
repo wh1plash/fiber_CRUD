@@ -34,9 +34,10 @@ services:
     ports:
       - "5444:5432"
     volumes:
-      - ./postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql/data
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
 volumes:
-  grafana_data:     
+  grafana_data:
+  postgres_data:
