@@ -72,7 +72,7 @@ PG_DB_NAME="Fiber_CRUD"
 ```
 
 ## Testing
-### for now it need to be created database 'test' in postrges DB
+### for now it need to be created database 'test' in postgres DB
 Run test by
 ```
 make test
