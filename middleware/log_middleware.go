@@ -27,7 +27,6 @@ func LoggingHandlerDecorator(handler fiber.Handler) fiber.Handler {
 				status = e.Status
 				errors = e.Errors
 				errorType = "Validation error"
-
 			default:
 				status = fiber.StatusInternalServerError
 				errors["error"] = err.Error()

@@ -42,11 +42,7 @@ func JWTAuthentication(h fiber.Handler, userStore store.UserStore) fiber.Handler
 		// Set the current authenticated user to the context.
 		//c.Context().SetUserValue("user", user)
 
-		err = h(c)
-		if err != nil {
-			return err
-		}
-		return nil
+		return h(c)
 	}
 }
 
