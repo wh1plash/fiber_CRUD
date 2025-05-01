@@ -14,10 +14,6 @@ import (
 
 func JWTAuthentication(h fiber.Handler, userStore store.UserStore) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		err := h(c)
-		if err != nil {
-			return err
-		}
 		authHeader := c.Get("Authorization")
 		if authHeader == "" {
 			return api.ErrUnAuthorized("unauthorized")
@@ -45,7 +41,12 @@ func JWTAuthentication(h fiber.Handler, userStore store.UserStore) fiber.Handler
 		_ = user
 		// Set the current authenticated user to the context.
 		//c.Context().SetUserValue("user", user)
-		return err
+
+		err = h(c)
+		if err != nil {
+			return err
+		}
+		return nil
 	}
 }
 
