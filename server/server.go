@@ -64,6 +64,7 @@ func (s *Server) Run() {
 
 	auth.Post("/auth", WrapHandler(promMetrics, authHandler.HandleAuthenticate, "HandleAuthenticate"))
 
+	//TODO auth pass to create user if invalid
 	apiv1.Post("/user", WrapHandler(promMetrics, WithAuth(userHandler.HandlePostUser, db), "HandlePostUser"))
 	apiv1.Put("/user/:id", WrapHandler(promMetrics, WithAuth(userHandler.HandlePutUser, db), "HandlePutUser"))
 	apiv1.Delete("/user/:id", WrapHandler(promMetrics, WithAuth(userHandler.HandleDeleteUser, db), "HandleDeleteUser"))

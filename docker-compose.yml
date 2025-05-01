@@ -1,5 +1,24 @@
-version: '3'
+version: '3.8'
 services:
+  postgres:
+    image: postgres:15
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: Fiber_CRUD
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d Fiber_CRUD"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   prometheus:
     image: prom/prometheus
     container_name: prometheus
@@ -7,8 +26,8 @@ services:
       - "9090:9090"
     volumes:
       - ./metrics/prometheus.yml:/etc/prometheus/prometheus.yml
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
       
   grafana:
     image: grafana/grafana-enterprise
@@ -21,22 +40,19 @@ services:
       - grafana_data:/var/lib/grafana
     depends_on:
       - prometheus
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
-
-  postgres_db:
-    image: postgres:latest
-    container_name: postgres_db
-    environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: postgres
-      POSTGRES_DB: Fiber_CRUD
+    # extra_hosts:
+    #   - "host.docker.internal:host-gateway"
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "5444:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
+      - "3000:3000"
+    container_name: fiber-crud
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: on-failure
 
 volumes:
   grafana_data:
