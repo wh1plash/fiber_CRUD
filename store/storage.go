@@ -231,11 +231,41 @@ func (p *PostgresStore) createUserTable() error {
 	)`
 
 	_, err := p.db.Exec(query)
+	if err != nil {
+		return err
+	}
+
 	return err
 }
 
 func (p *PostgresStore) Init() error {
 	return p.createUserTable()
+}
+
+func (p *PostgresStore) CreateAdmin() error {
+	rows, _ := p.db.Query("select * from users where first_name = $1", "Admin")
+	if rows.Next() {
+		return nil
+	}
+
+	params := types.CreateUserParams{
+		FirstName: "Admin",
+		LastName:  "Admin",
+		Email:     "Admin@test.com",
+		Password:  "Admin",
+	}
+
+	user, err := types.NewUserFromParams(params)
+	if err != nil {
+		fmt.Println("something went wrong with creating the user")
+	}
+	user.IsAdmin = true
+
+	_, err = p.InsertUser(context.Background(), user)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (p *PostgresStore) DropTable(name string) error {
