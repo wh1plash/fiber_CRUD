@@ -18,8 +18,6 @@ build:
   #   DOCKER_TLS_CERTDIR: "/certs"
   before_script:
     - cp "$ENV_FILE" .env
-    - ls -lah
-    - cat .env
   script:
     - docker compose up -d
 
