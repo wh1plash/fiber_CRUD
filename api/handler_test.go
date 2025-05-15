@@ -46,7 +46,7 @@ func (tdb *testdb) teardown(t *testing.T) {
 }
 
 func setup(t *testing.T) *testdb {
-	connStr := "host=localhost port=5444 user=postgres password=postgres dbname=test sslmode=disable"
+	connStr := "host=localhost port=5432 user=postgres password=postgres dbname=test sslmode=disable"
 	db, err := store.NewPostgresStore(connStr)
 	if err != nil {
 		t.Fatal(err)

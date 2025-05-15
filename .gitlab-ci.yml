@@ -1,5 +1,6 @@
 stages:
   - build
+  - test
   - deploy
 
 variables:
@@ -18,6 +19,12 @@ build:
   artifacts:
     paths:
       - ./metrics/prometheus.yml  # Makes it available for later jobs
+
+test:
+  stage: test
+  script:
+    - make test
+
 # deploy:
 #   stage: deploy
 #   script:
