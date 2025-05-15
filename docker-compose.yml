@@ -26,8 +26,6 @@ services:
       - "9090:9090"
     volumes:
       - prometheus:/etc/prometheus/
-    tmpfs:
-      - /tmp  # Temporary storage for the initial config
     restart: unless-stopped      
     # extra_hosts:
     #   - "host.docker.internal:host-gateway"
