@@ -23,7 +23,7 @@ services:
     # image: prom/prometheus
     # container_name: prometheus
     build:
-      dockerfile: ./prometheus/Dockerfile
+      dockerfile: ./metrics/Dockerfile
     ports:
       - "9090:9090"
     # volumes:
