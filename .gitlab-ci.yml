@@ -23,7 +23,7 @@ build:
 test:
   stage: test
   before_script:
-    - apt-get update && apt-get install make
+    - apk update && upgrade && apk add make
   script:
     - make test
 
