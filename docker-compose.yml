@@ -25,7 +25,8 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./metrics:/etc/prometheus:ro
+      - ./metrics/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    read_only: true
     # extra_hosts:
     #   - "host.docker.internal:host-gateway"
       
