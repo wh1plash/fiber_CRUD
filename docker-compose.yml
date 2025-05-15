@@ -25,7 +25,7 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./metrics/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./metrics/:/etc/prometheus
     # extra_hosts:
     #   - "host.docker.internal:host-gateway"
       
@@ -48,7 +48,7 @@ services:
       dockerfile: Dockerfile
     ports:
       - "3000:3000"
-    container_name: fiber-crud
+    container_name: fiber_app
     depends_on:
       postgres:
         condition: service_healthy
