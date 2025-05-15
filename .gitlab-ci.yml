@@ -18,6 +18,9 @@ build:
   #   DOCKER_TLS_CERTDIR: "/certs"
   before_script:
     - cp "$ENV_FILE" .env
+    - mkdir -p ./metrics  # Create metrics directory if it doesn't exist
+    # - if [ ! -f ./metrics/prometheus.yml ]; then touch ./metrics/prometheus.yml; fi  # Create empty file if it doesn't exist
+    - chmod 644 ./metrics/prometheus.yml
   script:
     - docker compose up -d
 

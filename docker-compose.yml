@@ -25,7 +25,9 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - /builds/whiplash2486/fiber_crud/metrics/prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./metrics/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    command:
+    - '--config.file=/etc/prometheus/prometheus.yml'  
     # extra_hosts:
     #   - "host.docker.internal:host-gateway"
       
