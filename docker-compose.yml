@@ -25,10 +25,14 @@ services:
     ports:
       - "9090:9090"
     volumes:
-      - ./metrics/prometheus.yml:/etc/prometheus/prometheus.yml:ro  # Read-only mount
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml'  # Explicitly specify config path
-    restart: unless-stopped
+      - prometheus:/etc/prometheus/
+    command: sh -c "
+      mkdir -p /etc/prometheus/ && 
+      cp /tmp/prometheus.yml /etc/prometheus/prometheus.yml && 
+      exec /bin/prometheus --config.file=/etc/prometheus/prometheus.yml"
+    tmpfs:
+      - /tmp  # Temporary storage for the initial config
+    restart: unless-stopped      
     # extra_hosts:
     #   - "host.docker.internal:host-gateway"
       
@@ -58,5 +62,6 @@ services:
     restart: on-failure
 
 volumes:
+  prometheus:
   grafana_data:
   postgres_data:

@@ -13,9 +13,8 @@ build:
   stage: build
   before_script:
     - cp "$ENV_FILE" .env
-    - mkdir -p ./metrics  # Create metrics directory if it doesn't exist
   script:
-    - docker compose up -d --force-recreate  # Ensures fresh start
+    - docker compose up -d # Ensures fresh start
   artifacts:
     paths:
       - ./metrics/prometheus.yml  # Makes it available for later jobs
