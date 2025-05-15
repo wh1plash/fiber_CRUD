@@ -20,9 +20,7 @@ build:
     - cp "$ENV_FILE" .env
   script:
     - docker compose up -d
-  artifacts:
-    paths:
-      - .  
+
 # deploy:
 #   stage: deploy
 #   script:
