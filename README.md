@@ -78,6 +78,30 @@ Run test by
 make test
 ```
 
+## GitLab CI/CD
+### Docker container for gitlab runner
+```
+docker run -d --name gitlab-runner \
+--restart always \
+-v $HOME/gitlab-runner/config:/etc/gitlab-runner \
+-v /var/run/docker.sock:/var/run/docker.sock \
+gitlab/gitlab-runner:alpine
+
+docker run --rm -it \
+-v $HOME/gitlab-runner/config:/etc/gitlab-runner \
+gitlab/gitlab-runner:alpine register
+
+> https://gitlab.com/
+> tocken from your GitLab repository - CI/CD Settings - Register runner
+> deploy
+> docker
+> docker:dind
+```
+### important to edit ~/gitlab-runner/config/config.toml
+```
+volumes = ["/var/run/docker.sock:/var/run/docker.sock", "/cache"]
+
+```
 
 ## Useful tools
 ### go-callvis
