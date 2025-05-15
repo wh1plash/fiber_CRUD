@@ -24,10 +24,9 @@ services:
     container_name: prometheus
     ports:
       - "9090:9090"
-    volumes:
-      - ./metrics/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    command:
-      - '--config.file=/etc/prometheus/prometheus.yml' 
+    configs:
+      - source: prometheus_config
+        target: /etc/prometheus/prometheus.yml 
     # extra_hosts:
     #   - "host.docker.internal:host-gateway"
       
@@ -59,3 +58,7 @@ services:
 volumes:
   grafana_data:
   postgres_data:
+
+configs:
+  prometheus_config:
+    file: ./metrics/prometheus.yml  
