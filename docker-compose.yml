@@ -26,10 +26,6 @@ services:
       - "9090:9090"
     volumes:
       - prometheus:/etc/prometheus/
-    command: sh -c "
-      mkdir -p /etc/prometheus/ && 
-      cp /tmp/prometheus.yml /etc/prometheus/prometheus.yml && 
-      exec /bin/prometheus --config.file=/etc/prometheus/prometheus.yml"
     tmpfs:
       - /tmp  # Temporary storage for the initial config
     restart: unless-stopped      
