@@ -26,8 +26,7 @@ services:
       - "9090:9090"
     volumes:
       - ./metrics/prometheus.yml:/etc/prometheus/prometheus.yml:ro
-    command:
-    - '--config.file=/etc/prometheus/prometheus.yml'  
+ 
     # extra_hosts:
     #   - "host.docker.internal:host-gateway"
       
