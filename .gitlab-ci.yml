@@ -23,7 +23,7 @@ build:
 test:
   stage: test
   before_script:
-    - apk update && upgrade && apk add make
+    - apk update && apk add make
   script:
     - make test
 
