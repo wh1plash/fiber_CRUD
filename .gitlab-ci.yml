@@ -1,0 +1,19 @@
+stages:
+  - build
+  - deploy
+
+variables:
+  COMPOSE_PROJECT_NAME: fiber_app
+
+before_script:
+  - echo "Running CI pipeline..."
+
+build:
+  stage: build
+  script:
+    - docker-compose build
+
+deploy:
+  stage: deploy
+  script:
+    - docker-compose up -d
