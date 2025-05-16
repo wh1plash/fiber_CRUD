@@ -45,8 +45,6 @@ before_script:
   - docker info
 
 
-build:
-  stage: build
 deploy:
   stage: deploy
   before_script:
