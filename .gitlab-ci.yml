@@ -6,7 +6,6 @@ stages:
 variables:
   COMPOSE_PROJECT_NAME: fiber_app
 
-
 test:
   stage: test
   image: golang:1.24
