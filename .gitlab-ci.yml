@@ -7,7 +7,7 @@ variables:
   COMPOSE_PROJECT_NAME: fiber_app
 
 
-test-with-postgres:
+test:
   stage: test
   image: golang:1.24
   services:
@@ -21,6 +21,8 @@ test-with-postgres:
     - apt-get update && apt-get install -y postgresql-client
     - until pg_isready -h postgres -U $POSTGRES_USER; do sleep 1; done
   script:
+    - go mod download
+    - make test
 
 before_script:
   - echo "Running CI pipeline..."
