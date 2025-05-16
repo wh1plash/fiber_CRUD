@@ -53,6 +53,7 @@ deploy:
     - docker compose up -d # Ensures fresh start
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev"'
+    - if: '$CI_COMMIT_BRANCH == "main"'
   # artifacts:
   #   paths:
   #     - ./metrics/prometheus.yml  # Makes it available for later jobs
