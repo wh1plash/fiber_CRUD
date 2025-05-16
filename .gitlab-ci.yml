@@ -9,36 +9,18 @@ variables:
 
 test-with-postgres:
   stage: test
-  # image: docker:latest
-  # services:
-  #   - docker:dind
+  image: golang:1.24
+  services:
+    - name: postgres:15
+      alias: postgres
   variables:
-    DOCKER_HOST: tcp://docker:2375
-    POSTGRES_USER: testuser
-    POSTGRES_PASSWORD: testpass
-    POSTGRES_DB: testdb
+    POSTGRES_USER: postgres
+    POSTGRES_PASSWORD: postgres
+    POSTGRES_DB: test
   before_script:
-    - apk add make
-    - apk add --no-cache docker-cli bash curl
-    - docker pull postgres:15
-    - |
-      docker run -d \
-        --name test-postgres \
-        -e POSTGRES_USER=$POSTGRES_USER \
-        -e POSTGRES_PASSWORD=$POSTGRES_PASSWORD \
-        -e POSTGRES_DB=$POSTGRES_DB \
-        -p 5432:5432 \
-        postgres:15
-    - |
-      echo "⏳ Waiting for PostgreSQL to be ready..."
-      until docker exec test-postgres pg_isready -U $POSTGRES_USER; do sleep 1; done
+    - apt-get update && apt-get install -y postgresql-client
+    - until pg_isready -h postgres -U $POSTGRES_USER; do sleep 1; done
   script:
-    - echo "✅ PostgreSQL is up. Running tests..."
-    - make test
-  after_script:
-    - echo "🧹 Cleaning up..."
-    - docker stop test-postgres
-    - docker rm test-postgres
 
 before_script:
   - echo "Running CI pipeline..."
