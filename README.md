@@ -79,7 +79,7 @@ make test
 ```
 
 ## GitLab CI/CD
-### Docker container for gitlab runner
+### Docker container for local runner on remote server
 ```
 docker run -d --name gitlab-runner \
 --restart always \
@@ -100,7 +100,6 @@ gitlab/gitlab-runner:alpine register
 ### important to edit ~/gitlab-runner/config/config.toml
 ```
 volumes = ["/var/run/docker.sock:/var/run/docker.sock", "/cache"]
-
 ```
 
 ## Useful tools
