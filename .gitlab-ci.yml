@@ -50,7 +50,7 @@ deploy:
   before_script:
     - cp "$ENV_FILE" .env
   script:
-    -- echo "Using COMPOSE_PROJECT_NAME=$COMPOSE_PROJECT_NAME"
+    - echo "Using COMPOSE_PROJECT_NAME=$COMPOSE_PROJECT_NAME"
     - docker ps -aq --filter "name=${COMPOSE_PROJECT_NAME}_" | xargs -r docker rm -f
     - docker compose up -d # Ensures fresh start
   rules:
