@@ -57,20 +57,20 @@ func (s *Server) Run() {
 	}
 
 	var (
-		app         = fiber.New(config)
-		userHandler = api.NewUserHandler(db)
-		authHandler = api.NewAuthHandler(db)
-		promMetrics = middleware.NewPromMetrics()
-		auth        = app.Group("/api")
-		apiv1       = app.Group("/api/v1")
+		app          = fiber.New(config)
+		checkHandler = api.NewTestHandler
+		userHandler  = api.NewUserHandler(db)
+		authHandler  = api.NewAuthHandler(db)
+		promMetrics  = middleware.NewPromMetrics()
+		check        = app.Group("/check")
+		auth         = app.Group("/api")
+		apiv1        = app.Group("/api/v1")
 	)
 	RegisterMetrics(app)
 
 	auth.Post("/auth", WrapHandler(promMetrics, authHandler.HandleAuthenticate, "HandleAuthenticate"))
 
-	apiv1.Get("/healthy", WrapHandler(promMetrics, func(c *fiber.Ctx) error {
-		return c.JSON("result", "ok")
-	}, "Healthy"))
+	check.Get("/healthy", WrapHandler(promMetrics, checkHandler().HandleHealthy, "Healthy"))
 	apiv1.Post("/user", WrapHandler(promMetrics, WithAuth(userHandler.HandlePostUser, db), "HandlePostUser"))
 	apiv1.Put("/user/:id", WrapHandler(promMetrics, WithAuth(userHandler.HandlePutUser, db), "HandlePutUser"))
 	apiv1.Delete("/user/:id", WrapHandler(promMetrics, WithAuth(userHandler.HandleDeleteUser, db), "HandleDeleteUser"))
