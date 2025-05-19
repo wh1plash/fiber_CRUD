@@ -217,3 +217,24 @@ func TestHandleGetUserByIDNotFound(t *testing.T) {
 		t.Errorf("expected status code %d but got %d", http.StatusNotFound, resp.StatusCode)
 	}
 }
+
+func TestHealthy(t *testing.T) {
+	app := fiber.New(fiber.Config{
+		ErrorHandler: ErrorHandler,
+	})
+
+	app.Get("/", func(c *fiber.Ctx) error {
+		return c.JSON("result", "ok")
+	})
+
+	req := httptest.NewRequest("GET", "/", nil)
+	req.Header.Add("Content-Type", "application/json")
+	resp, err := app.Test(req)
+	if err != nil {
+		t.Error(err)
+	}
+	if resp.StatusCode != fiber.StatusOK {
+		t.Errorf("expected status code %d but got %d", http.StatusOK, resp.StatusCode)
+	}
+
+}
