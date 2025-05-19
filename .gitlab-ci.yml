@@ -50,6 +50,7 @@ deploy:
   before_script:
     - cp "$ENV_FILE" .env
   script:
+    - docker ps -aq --filter "name=${COMPOSE_PROJECT_NAME}_" | xargs -r docker rm -f
     - docker compose up -d # Ensures fresh start
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev"'

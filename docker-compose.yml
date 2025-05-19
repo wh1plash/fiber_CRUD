@@ -21,7 +21,7 @@ services:
 
   prometheus:
     # image: prom/prometheus
-    # container_name: prometheus
+    container_name: prometheus
     build:
       dockerfile: ./metrics/Dockerfile
     ports:
