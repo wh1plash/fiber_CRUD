@@ -4,7 +4,7 @@ stages:
   - deploy
 
 variables:
-  COMPOSE_PROJECT_NAME: fiber_app
+  COMPOSE_PROJECT_NAME: fiber_CRUD
   IMAGE_NAME: whiplash2486/fiber_crud
   IMAGE_TAG: 1.1
 
@@ -48,6 +48,7 @@ deploy:
     # - docker ps -a
     # - docker ps -aq --filter "name=${COMPOSE_PROJECT_NAME}" | xargs -r docker rm -f
     - echo "Removing Docker image $COMPOSE_PROJECT_NAME-app:$latest..."
+    - echo $CI_PROJECT_NAME
     - docker rmi -f $COMPOSE_PROJECT_NAME-app:latest || true
     - docker compose up -d # Ensures fresh start
   rules:
