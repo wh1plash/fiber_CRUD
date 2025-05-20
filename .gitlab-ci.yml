@@ -47,11 +47,14 @@ before_script:
 
 deploy:
   stage: deploy
+  variables:
+    IMAGE_NAME: fiber_app-app
+    IMAGE_TAG: latest
   before_script:
     - cp "$ENV_FILE" .env
   script:
     - echo "Stopping and removing containers for project $COMPOSE_PROJECT_NAME..."
-    - echo ps -a
+    - docker ps -a
     - docker ps -aq --filter "name=${COMPOSE_PROJECT_NAME}" | xargs -r docker rm -f
     - echo "Removing Docker image $IMAGE_NAME:$IMAGE_TAG..."
     - docker rmi -f $IMAGE_NAME:$IMAGE_TAG || true
