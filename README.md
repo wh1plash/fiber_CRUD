@@ -48,9 +48,14 @@ http://localhost:3000/api/v1/user/:id
 ```
 http://localhost:3000/metrics
 ```
-## Grafana dashboards
+## Grafana homepage
 ```
 http://localhost:3001/
+```
+
+### Grafana datasources prometheus
+```
+http://prometheus:9090
 ```
 
 ### Grafana Dashboard Template(JSON)

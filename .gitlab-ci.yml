@@ -25,7 +25,7 @@ test:
     - make test
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev"'
-    - if: '$CI_COMMIT_BRANCH == "main"'
+    # - if: '$CI_COMMIT_BRANCH == "main"'
 
 build:
   stage: build
