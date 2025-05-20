@@ -58,7 +58,7 @@ func (s *Server) Run() {
 
 	var (
 		app          = fiber.New(config)
-		checkHandler = api.NewTestHandler
+		checkHandler = api.NewCheckHandler
 		userHandler  = api.NewUserHandler(db)
 		authHandler  = api.NewAuthHandler(db)
 		promMetrics  = middleware.NewPromMetrics()
