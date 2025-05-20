@@ -4,7 +4,11 @@ stages:
   - deploy
 
 variables:
+  DOCKER_HOST: tcp://docker:2375/
   COMPOSE_PROJECT_NAME: fiber_app
+  DOCKER_TLS_CERTDIR: ""
+  IMAGE_NAME: whiplash2486/fiber_crud
+  IMAGE_TAG: 1.1
 
 test:
   stage: test
@@ -28,9 +32,6 @@ test:
 
 build:
   stage: build
-  variables:
-    IMAGE_NAME: whiplash2486/fiber_crud
-    IMAGE_TAG: 1.1
   before_script:
     - echo "$REGISTRY_PASS" | docker login -u "$REGISTRY_USER" --password-stdin
   script:
@@ -42,9 +43,6 @@ build:
 
 deploy:
   stage: deploy
-  variables:
-    IMAGE_NAME: whiplash2486/fiber_crud
-    IMAGE_TAG: 1.1
   before_script:
     - cp "$ENV_FILE" .env
   script:
