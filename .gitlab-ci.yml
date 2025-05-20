@@ -52,8 +52,8 @@ deploy:
     - cp "$ENV_FILE" .env
   script:
     - echo "Stopping and removing containers for project $COMPOSE_PROJECT_NAME..."
-    - docker ps -a
-    - docker ps -aq --filter "name=${COMPOSE_PROJECT_NAME}" | xargs -r docker rm -f
+    # - docker ps -a
+    # - docker ps -aq --filter "name=${COMPOSE_PROJECT_NAME}" | xargs -r docker rm -f
     - echo "Removing Docker image $IMAGE_NAME:$IMAGE_TAG..."
     - docker rmi -f $IMAGE_NAME:$IMAGE_TAG || true
     - docker compose up -d # Ensures fresh start

@@ -91,6 +91,8 @@ docker run --rm -it \
 -v $HOME/gitlab-runner/config:/etc/gitlab-runner \
 gitlab/gitlab-runner:alpine register
 
+//glrt-VF8Ga5npyanSiViES_JXLm86MQpwOjE1bDd4dAp0OjMKdToybGJhdRg.01.1j1aoxkl9
+
 > https://gitlab.com/
 > tocken from your GitLab repository - CI/CD Settings - Register runner
 > deploy
