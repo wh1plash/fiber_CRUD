@@ -34,7 +34,7 @@ build:
   before_script:
     - echo "$REGISTRY_PASS" | docker login -u "$REGISTRY_USER" --password-stdin
   script:
-    - docker build -t $IMAGE_NAME:$IMAGE_TAG .
+    - docker build --no-cache -t $IMAGE_NAME:$IMAGE_TAG .
     - docker push $IMAGE_NAME:$IMAGE_TAG
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev"'
@@ -51,6 +51,7 @@ deploy:
     - cp "$ENV_FILE" .env
   script:
     - echo "Stopping and removing containers for project $COMPOSE_PROJECT_NAME..."
+    - echo ps -a
     - docker ps -aq --filter "name=${COMPOSE_PROJECT_NAME}" | xargs -r docker rm -f
     - echo "Removing Docker image $IMAGE_NAME:$IMAGE_TAG..."
     - docker rmi -f $IMAGE_NAME:$IMAGE_TAG || true
