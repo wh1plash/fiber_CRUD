@@ -40,11 +40,6 @@ build:
     - if: '$CI_COMMIT_BRANCH == "dev"'
     - if: '$CI_COMMIT_BRANCH == "main"'
 
-before_script:
-  - echo "Running CI pipeline..."
-  - docker info
-
-
 deploy:
   stage: deploy
   variables:
@@ -65,9 +60,3 @@ deploy:
   # artifacts:
   #   paths:
   #     - ./metrics/prometheus.yml  # Makes it available for later jobs
-
-
-# deploy:
-#   stage: deploy
-#   script:
-#     - docker-compose logs
