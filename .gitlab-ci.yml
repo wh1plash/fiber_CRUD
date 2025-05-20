@@ -5,6 +5,8 @@ stages:
 
 variables:
   COMPOSE_PROJECT_NAME: fiber_app
+  IMAGE_NAME: whiplash2486/fiber_crud
+  IMAGE_TAG: 1.1
 
 test:
   stage: test
@@ -25,10 +27,6 @@ test:
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev"'
     - if: '$CI_COMMIT_BRANCH == "main"'
-
-variables:
-  IMAGE_NAME: whiplash2486/fiber_crud
-  IMAGE_TAG: 1.1
 
 build:
   stage: build
