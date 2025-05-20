@@ -4,9 +4,7 @@ stages:
   - deploy
 
 variables:
-  DOCKER_HOST: tcp://docker:2375/
   COMPOSE_PROJECT_NAME: fiber_app
-  DOCKER_TLS_CERTDIR: ""
   IMAGE_NAME: whiplash2486/fiber_crud
   IMAGE_TAG: 1.1
 
