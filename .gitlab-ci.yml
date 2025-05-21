@@ -52,7 +52,6 @@ build_slim:
     - build
   script:
     - echo "$REGISTRY_PASS" | docker login -u "$REGISTRY_USER" --password-stdin
-    - chmod +x ./bin/app
     - |
       cat <<EOF > Dockerfile
       FROM alpine:latest
