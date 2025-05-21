@@ -58,7 +58,7 @@ build_slim:
       cat <<EOF > Dockerfile
       FROM scratch
       COPY /bin/app_static /bin/app
-      COPY /app/.env /app/.env
+      COPY .env .env
       EXPOSE 3000
       CMD ["./bin/app"]
       EOF
