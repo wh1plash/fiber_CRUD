@@ -38,6 +38,16 @@ build:
     - if: '$CI_COMMIT_BRANCH == "dev"'
     - if: '$CI_COMMIT_BRANCH == "main"'
 
+binary_build:
+  stage: build
+  before_script:
+    - echo "$REGISTRY_PASS" | docker login -u "$REGISTRY_USER" --password-stdin
+  script:
+    - make build
+  artifacts:
+    paths:
+      - ./bin/app
+
 deploy:
   stage: deploy
   before_script:
