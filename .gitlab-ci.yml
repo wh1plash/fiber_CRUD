@@ -55,9 +55,9 @@ build_slim:
     - |
       cat <<EOF > Dockerfile
       FROM scratch
-      COPY /bin/app_static /app
+      COPY /bin/app_static /bin/app
       EXPOSE 3000
-      ENTRYPOINT ["/app"]
+      ENTRYPOINT ["/bin/app"]
       EOF
 
     - docker build -t $IMAGE_NAME:$IMAGE_TAG-slim .
