@@ -56,10 +56,9 @@ build_slim:
     - |
       cat <<EOF > Dockerfile
       FROM alpine:latest
-      RUN mkdir app
-      WORKDIR /app
-      COPY bin/app /bin/app
-      ENTRYPOINT ["./bin/app"]
+      COPY bin/app app/app
+      EXPOSE 3000
+      CMD ["./app/app"]
       EOF
 
     - docker build -t $IMAGE_NAME:$IMAGE_TAG-slim .
@@ -74,7 +73,7 @@ deploy:
     # - docker ps -a
     # - docker ps -aq --filter "name=${COMPOSE_PROJECT_NAME}" | xargs -r docker rm -f
     - echo "Removing Docker image $CI_PROJECT_NAME..."
-    - docker rmi -f $CI_PROJECT_NAME:1.1-slim || true
+    - docker rmi -f $REGISTRY_USER/$CI_PROJECT_NAME:1.1-slim || true
     - docker compose up -d # Ensures fresh start
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev"'
