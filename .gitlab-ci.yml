@@ -53,14 +53,13 @@ build_slim:
   script:
     - echo "$REGISTRY_PASS" | docker login -u "$REGISTRY_USER" --password-stdin
     - chmod +x ./bin/app
-    - ls
     - |
       cat <<EOF > Dockerfile
       FROM alpine:latest
       WORKDIR /app
-      COPY bin/app bin/app
+      COPY bin/app ./app
       EXPOSE 3000
-      CMD ["./bin/app"]
+      CMD ["./app"]
       EOF
 
     - docker build -t $IMAGE_NAME:$IMAGE_TAG-slim .
