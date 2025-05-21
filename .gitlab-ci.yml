@@ -56,9 +56,10 @@ build_slim:
     - |
       cat <<EOF > Dockerfile
       FROM alpine:latest
-      COPY bin/app app/app
+      WORKDIR /app
+      COPY bin/app bin/app
       EXPOSE 3000
-      CMD ["./app/app"]
+      CMD ["./bin/app"]
       EOF
 
     - docker build -t $IMAGE_NAME:$IMAGE_TAG-slim .
