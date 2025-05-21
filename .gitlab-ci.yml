@@ -26,7 +26,7 @@ test:
     - make test
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev"'
-    - if: '$CI_COMMIT_BRANCH == "main"'
+    # - if: '$CI_COMMIT_BRANCH == "main"'
 
 build:
   stage: build
@@ -57,7 +57,7 @@ build_slim:
       FROM scratch
       COPY /bin/app_static /bin/app
       EXPOSE 3000
-      ENTRYPOINT ["/bin/app"]
+      CMD ["./bin/app"]
       EOF
 
     - docker build -t $IMAGE_NAME:$IMAGE_TAG-slim .
