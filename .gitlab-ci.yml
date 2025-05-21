@@ -1,6 +1,7 @@
 stages:
   - test
   - build
+  - package
   - deploy
 
 variables:
@@ -46,9 +47,22 @@ build:
       - ./bin/app
 
 build_slim:
-  stage: build
+  stage: package
+  dependencies:
+    - build
   script:
-    - ls ./bin      
+    - echo "$REGISTRY_PASS" | docker login -u "$REGISTRY_USER" --password-stdin
+    - chmod +x ./bin/app
+    - |
+      cat <<EOF > Dockerfile
+      FROM alpine:latest
+      RUN apk add --no-cache ca-certificates
+      COPY bin/app /app
+      ENTRYPOINT ["/app"]
+      EOF
+
+    - docker build -t $IMAGE_NAME:$IMAGE_TAG-slim .
+    - docker push $IMAGE_NAME:$IMAGE_TAG-slim
 
 deploy:
   stage: deploy
