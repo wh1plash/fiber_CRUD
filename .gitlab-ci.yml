@@ -35,7 +35,7 @@ build:
     - echo "$REGISTRY_PASS" | docker login -u "$REGISTRY_USER" --password-stdin
   script:
     - docker build -t $IMAGE_NAME:$IMAGE_TAG .
-    # - docker push $IMAGE_NAME:$IMAGE_TAG
+    - docker push $IMAGE_NAME:$IMAGE_TAG
     - docker create --name tmp $IMAGE_NAME:$IMAGE_TAG
     - docker cp tmp:/app/bin/app ./bin/app
     - docker rm tmp
@@ -46,23 +46,23 @@ build:
     paths:
       - ./bin/app
 
-build_slim:
-  stage: package
-  dependencies:
-    - build
-  script:
-    - echo "$REGISTRY_PASS" | docker login -u "$REGISTRY_USER" --password-stdin
-    - |
-      cat <<EOF > Dockerfile
-      FROM golang:1.24.3
-      WORKDIR /app
-      COPY bin/app ./bin/app
-      EXPOSE 3000
-      CMD ["./bin/app"]
-      EOF
+# build_slim:
+#   stage: package
+#   dependencies:
+#     - build
+#   script:
+#     - echo "$REGISTRY_PASS" | docker login -u "$REGISTRY_USER" --password-stdin
+#     - |
+#       cat <<EOF > Dockerfile
+#       FROM golang:1.24.3
+#       WORKDIR /app
+#       COPY bin/app ./bin/app
+#       EXPOSE 3000
+#       CMD ["./bin/app"]
+#       EOF
 
-    - docker build -t $IMAGE_NAME:$IMAGE_TAG-slim .
-    - docker push $IMAGE_NAME:$IMAGE_TAG-slim
+#     - docker build -t $IMAGE_NAME:$IMAGE_TAG-slim .
+#     - docker push $IMAGE_NAME:$IMAGE_TAG-slim
 
 deploy:
   stage: deploy
