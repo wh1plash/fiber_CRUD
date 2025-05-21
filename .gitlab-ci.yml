@@ -56,7 +56,7 @@ build_slim:
     - |
       cat <<EOF > Dockerfile
       FROM alpine:latest
-      RUN apk add --no-cache ca-certificates
+      RUN mkdir app
       WORKDIR /app
       COPY bin/app /bin/app
       ENTRYPOINT ["./bin/app"]
