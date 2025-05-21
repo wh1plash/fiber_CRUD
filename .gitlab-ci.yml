@@ -50,12 +50,15 @@ build_slim:
   stage: package
   dependencies:
     - build
+  before_script:
+    - cp "$ENV_FILE" .env    
   script:
     - echo "$REGISTRY_PASS" | docker login -u "$REGISTRY_USER" --password-stdin
     - |
       cat <<EOF > Dockerfile
       FROM scratch
       COPY /bin/app_static /bin/app
+      COPY /app/.env /app/.env
       EXPOSE 3000
       CMD ["./bin/app"]
       EOF
@@ -65,8 +68,6 @@ build_slim:
 
 deploy:
   stage: deploy
-  before_script:
-    - cp "$ENV_FILE" .env
   script:
     - echo "Stopping and removing containers for project $CI_PROJECT_NAME..."
     # - docker ps -a
