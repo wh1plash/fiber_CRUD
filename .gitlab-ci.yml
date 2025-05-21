@@ -57,8 +57,9 @@ build_slim:
       cat <<EOF > Dockerfile
       FROM alpine:latest
       RUN apk add --no-cache ca-certificates
-      COPY bin/app /app
-      ENTRYPOINT ["/app"]
+      WORKDIR /app
+      COPY bin/app /bin/app
+      ENTRYPOINT ["./bin/app"]
       EOF
 
     - docker build -t $IMAGE_NAME:$IMAGE_TAG-slim .
