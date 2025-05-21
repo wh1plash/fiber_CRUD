@@ -57,6 +57,7 @@ build_slim:
     - |
       cat <<EOF > Dockerfile
       FROM alpine:latest
+      WORKDIR /app
       COPY bin/app bin/app
       EXPOSE 3000
       CMD ["./bin/app"]
