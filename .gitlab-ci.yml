@@ -37,8 +37,7 @@ build:
     - docker build -t $IMAGE_NAME:$IMAGE_TAG .
     - docker push $IMAGE_NAME:$IMAGE_TAG
     - docker create --name tmp $IMAGE_NAME:$IMAGE_TAG
-    - CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./bin/app ./cmd/main.go
-    - docker cp tmp:/app/bin/app ./bin/app
+    - docker cp tmp:/app/bin/app_static ./bin/app_static
     - docker rm tmp
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev"'
@@ -56,9 +55,9 @@ build_slim:
     - |
       cat <<EOF > Dockerfile
       FROM scratch
-      COPY app ./bin/app
+      COPY /bin/app_static /app
       EXPOSE 3000
-      CMD ["./bin/app"]
+      ENTRYPOINT ["/app"]
       EOF
 
     - docker build -t $IMAGE_NAME:$IMAGE_TAG-slim .
