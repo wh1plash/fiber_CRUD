@@ -30,20 +30,25 @@ test:
 build:
   stage: build
   before_script:
+    - mkdir ./bin
     - echo "$REGISTRY_PASS" | docker login -u "$REGISTRY_USER" --password-stdin
   script:
     - docker build -t $IMAGE_NAME:$IMAGE_TAG .
-    - docker push $IMAGE_NAME:$IMAGE_TAG
-    - docker create -- name tmp $IMAGE_NAME:$IMAGE_TAG
-    - docker cp tmp:/app/bin/app ./bin
+    # - docker push $IMAGE_NAME:$IMAGE_TAG
+    - docker create --name tmp $IMAGE_NAME:$IMAGE_TAG
+    - docker cp tmp:/app/bin/app ./bin/app
     - docker rm tmp
   rules:
     - if: '$CI_COMMIT_BRANCH == "dev"'
     - if: '$CI_COMMIT_BRANCH == "main"'
   artifacts:
     paths:
-      - app
-      
+      - ./bin/app
+
+build_slim:
+  stage: build
+  script:
+    - ls ./bin      
 
 deploy:
   stage: deploy
