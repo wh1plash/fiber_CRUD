@@ -41,6 +41,7 @@ build:
 binary_build:
   stage: build
   before_script:
+    - apt-get update && apt-get install -y make
     - echo "$REGISTRY_PASS" | docker login -u "$REGISTRY_USER" --password-stdin
   script:
     - make build
