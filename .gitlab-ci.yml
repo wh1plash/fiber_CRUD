@@ -54,7 +54,7 @@ build_slim:
     - echo "$REGISTRY_PASS" | docker login -u "$REGISTRY_USER" --password-stdin
     - |
       cat <<EOF > Dockerfile
-      FROM alpine:latest
+      FROM golang:1.24.3
       WORKDIR /app
       COPY bin/app ./bin/app
       EXPOSE 3000
