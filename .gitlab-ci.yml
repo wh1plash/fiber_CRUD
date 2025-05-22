@@ -64,13 +64,17 @@ build_slim:
       EOF
 
     - docker build -t $IMAGE_NAME:$IMAGE_TAG-slim .
-    # - docker push $IMAGE_NAME:$IMAGE_TAG-slim
+    - docker save -o app-image.tar $IMAGE_NAME:$IMAGE_TAG-slim
   artifacts:
     paths:
-      - ./img/$IMAGE_NAME:$IMAGE_TAG-slim
+      - app-image.tar
 
 deploy:
   stage: deploy
+  dependencies:
+    - build_slim
+  before_script:
+    - docker load -i app-image.tar
   script:
     - echo "Stopping and removing containers for project $CI_PROJECT_NAME..."
     # - docker ps -a
