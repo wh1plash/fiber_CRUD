@@ -1,6 +1,8 @@
 package api
 
 import (
+	"fmt"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -11,6 +13,6 @@ func NewCheckHandler() *CheckHandler {
 }
 
 func (h CheckHandler) HandleHealthy(c *fiber.Ctx) error {
-	//fmt.Println("check")
+	fmt.Println("check")
 	return c.JSON(fiber.Map{"result": "ok"})
 }
