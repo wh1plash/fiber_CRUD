@@ -35,7 +35,7 @@ build:
     - echo "$REGISTRY_PASS" | docker login -u "$REGISTRY_USER" --password-stdin
   script:
     - docker build -t $IMAGE_NAME:$IMAGE_TAG .
-    - docker push $IMAGE_NAME:$IMAGE_TAG
+    # - docker push $IMAGE_NAME:$IMAGE_TAG
     - docker create --name tmp $IMAGE_NAME:$IMAGE_TAG
     - docker cp tmp:/app/bin/app_static ./bin/app_static
     - docker rm tmp
@@ -64,7 +64,10 @@ build_slim:
       EOF
 
     - docker build -t $IMAGE_NAME:$IMAGE_TAG-slim .
-    - docker push $IMAGE_NAME:$IMAGE_TAG-slim
+    # - docker push $IMAGE_NAME:$IMAGE_TAG-slim
+  artifacts:
+    paths:
+      - ./img/$IMAGE_NAME:$IMAGE_TAG-slim
 
 deploy:
   stage: deploy
