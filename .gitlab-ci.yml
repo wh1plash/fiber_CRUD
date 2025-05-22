@@ -5,7 +5,7 @@ stages:
   - deploy
 
 variables:
-  IMAGE_NAME: whiplash2486/fiber_crud
+  IMAGE_NAME: fiber_crud
   IMAGE_TAG: 1.1
 
 test:
@@ -63,8 +63,8 @@ build_slim:
       CMD ["./bin/app"]
       EOF
 
-    - docker build -t fiber_crud:1.1-slim .
-    - docker save -o app-image.tar fiber_crud:1.1-slim
+    - docker build -t $IMAGE_NAME:$IMAGE_TAG-slim .
+    - docker save -o app-image.tar $IMAGE_NAME:$IMAGE_TAG-slim
   artifacts:
     paths:
       - app-image.tar
@@ -75,7 +75,7 @@ deploy:
     - build_slim
   before_script:
     - echo "Removing Docker image $CI_PROJECT_NAME..."
-    - docker rmi -f fiber_crud:1.1-slim || true
+    - docker rmi -f $IMAGE_NAME:$IMAGE_TAG-slim || true
     - docker load -i app-image.tar
   script:
     - echo "Stopping and removing containers for project $CI_PROJECT_NAME..."
