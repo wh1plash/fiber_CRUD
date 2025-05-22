@@ -63,8 +63,8 @@ build_slim:
       CMD ["./bin/app"]
       EOF
 
-    - docker build -t $IMAGE_NAME:$IMAGE_TAG-slim .
-    - docker save -o app-image.tar $IMAGE_NAME:$IMAGE_TAG-slim
+    - docker build -t fiber_crud:1.1-slim .
+    - docker save -o app-image.tar fiber_crud:1.1-slim
   artifacts:
     paths:
       - app-image.tar
