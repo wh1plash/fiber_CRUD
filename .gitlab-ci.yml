@@ -65,6 +65,7 @@ build_slim:
 
     - docker build -t $IMAGE_NAME:$IMAGE_TAG-slim .
     - docker save -o app-image.tar $IMAGE_NAME:$IMAGE_TAG-slim
+    - docker rmi -f $IMAGE_NAME:$IMAGE_TAG-slim || true
   artifacts:
     paths:
       - app-image.tar
@@ -75,8 +76,8 @@ deploy:
     - build_slim
   before_script:
     - echo "Removing Docker image $CI_PROJECT_NAME..."
-    - docker rmi -f $IMAGE_NAME:$IMAGE_TAG-slim || true
-    - docker rmi -f $IMAGE_NAME:$IMAGE_TAG
+    # - docker rmi -f $IMAGE_NAME:$IMAGE_TAG-slim || true
+    # - docker rmi -f $IMAGE_NAME:$IMAGE_TAG
     - docker load -i app-image.tar
   script:
     - echo "Stopping and removing containers for project $CI_PROJECT_NAME..."
