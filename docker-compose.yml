@@ -46,9 +46,9 @@ services:
     #   - "host.docker.internal:host-gateway"
   app:
     image: fiber_crud:1.1-slim
+    container_name: fiber_crud
     ports:
       - "3000:3000"
-    container_name: fiber_crud
     depends_on:
       postgres:
         condition: service_healthy
