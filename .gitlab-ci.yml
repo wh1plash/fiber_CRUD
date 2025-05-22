@@ -76,6 +76,7 @@ deploy:
   before_script:
     - echo "Removing Docker image $CI_PROJECT_NAME..."
     - docker rmi -f $IMAGE_NAME:$IMAGE_TAG-slim || true
+    - docker rmi -f $IMAGE_NAME:$IMAGE_TAG
     - docker load -i app-image.tar
   script:
     - echo "Stopping and removing containers for project $CI_PROJECT_NAME..."
