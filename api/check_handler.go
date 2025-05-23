@@ -14,3 +14,7 @@ func (h CheckHandler) HandleHealthy(c *fiber.Ctx) error {
 	//fmt.Println("check")
 	return c.JSON(fiber.Map{"result": "ok"})
 }
+
+func (h CheckHandler) HandleDrop(c *fiber.Ctx) error {
+	panic("Drop application")
+}
