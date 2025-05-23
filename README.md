@@ -110,6 +110,16 @@ privileged = true
 volumes = ["/var/run/docker.sock:/var/run/docker.sock", "/cache"]
 ```
 
+## Kubernetes. K3d as a lightweight Kubernetes distribution
+install:
+```
+curl -s https://raw.githubusercontent.com/k3d-io/k3d/main/install.sh | bash
+```
+Create cluster
+```
+k3d cluster create dev-cluster --agents 2 --port "3030:80@loadbalancer"
+```
+
 ## Useful tools
 ### go-callvis
 This tool build interactive diagram of calling directly from source code
