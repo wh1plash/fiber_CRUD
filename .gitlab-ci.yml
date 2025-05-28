@@ -5,6 +5,7 @@ stages:
   - deploy
 
 variables:
+  REPO_DST: whiplash2486
   IMAGE_NAME: fiber_crud
   IMAGE_TAG: 1.1
 
@@ -65,7 +66,8 @@ build_slim:
       EOF
 
     - docker build -t $IMAGE_NAME:$IMAGE_TAG-slim .
-    - docker push $REGISTRY_USER/$IMAGE_NAME:$IMAGE_TAG-slim
+    - docker tag $IMAGE_NAME:$IMAGE_TAG-slim $REPO_DST/$IMAGE_NAME:$IMAGE_TAG-slim
+    - docker push $REPO_DST/$IMAGE_NAME:$IMAGE_TAG-slim
     - docker save -o app-image.tar $IMAGE_NAME:$IMAGE_TAG-slim
     - docker rmi -f $IMAGE_NAME:$IMAGE_TAG-slim || true
 
